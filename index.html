@@ -207,7 +207,7 @@
                         <textarea name="description" required></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Price (KSH) *</label>
+                        <label>Price (USD) *</label>
                         <input type="number" name="price" step="0.01" required>
                     </div>
                     <div class="form-group">
@@ -351,12 +351,12 @@
 
         function createSampleProducts() {
             const samples = [
-                { name: 'MBS Course Study', category: 'service', desc: '4 weeks to graduate or 16 weeks to Ambassador Trainer', price: 25.50, icon: '📚' },
-                { name: 'TACEP Technical Courses', category: 'service', desc: 'NITA Trade Testing - Online & Physical with certificates', price: 4,500, icon: '🎓' },
-                { name: 'Corporate Training', category: 'service', desc: 'Business entrepreneurship skills workshop', price: 400.50, icon: '💼' },
-                { name: 'CBD Products', category: 'physical', desc: 'Health and beauty solutions - Multiple sizes', price: 120.85, icon: '💊' },
-                { name: 'AI TaskMaster Pro', category: 'app', desc: 'AI-powered productivity suite', price: 5,000, icon: '📱' },
-                { name: 'EcoSmart Bottle', category: 'physical', desc: 'Smart temperature-controlled bottle', price: 250.50, icon: '📦' },
+                { name: 'MBS Course Study', category: 'service', desc: '4 weeks to graduate or 16 weeks to Ambassador Trainer', price: 2500, icon: '📚' },
+                { name: 'TACEP Technical Courses', category: 'service', desc: 'NITA Trade Testing - Online & Physical with certificates', price: 4500, icon: '🎓' },
+                { name: 'Corporate Training', category: 'service', desc: 'Business entrepreneurship skills workshop', price: 250, icon: '💼' },
+                { name: 'CBD Products', category: 'physical', desc: 'Health and beauty solutions - Multiple sizes', price: 1200, icon: '💊' },
+                { name: 'AI TaskMaster Pro', category: 'app', desc: 'AI-powered productivity suite', price: 49.99, icon: '📱' },
+                { name: 'EcoSmart Bottle', category: 'physical', desc: 'Smart temperature-controlled bottle', price: 39.99, icon: '📦' },
             ];
 
             return samples.map((item, idx) => `
@@ -421,7 +421,9 @@
 
         window.loadMarketplace = loadMarketplace;
         window.loadUserData = loadUserData;
-    
+    </script>
+
+    <script>
         function showPage(pageId) {
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
