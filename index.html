@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tau Africa Market Search - Global Marketplace</title>
+    <title>Tau Global Marketplace - One Stop Shopping & Advertising Platform</title>
     <style>
         * {
             margin: 0;
@@ -13,14 +13,14 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
         }
 
         .header {
             background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 1.2rem 2rem;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -43,8 +43,8 @@
         }
 
         .logo {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             position: relative;
         }
 
@@ -53,63 +53,59 @@
             height: 100%;
             background: radial-gradient(circle, #FFD700 0%, #FFA500 100%);
             border-radius: 50%;
-            position: relative;
             animation: shine 3s ease-in-out infinite;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-        }
-
-        .sun::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), transparent 50%);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.7);
         }
 
         @keyframes shine {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); }
-            50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 215, 0, 0.9); }
+            0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(255, 215, 0, 0.7); }
+            50% { transform: scale(1.1); box-shadow: 0 0 60px rgba(255, 215, 0, 1); }
+        }
+
+        .brand-info {
+            flex: 1;
+            max-width: 400px;
         }
 
         .brand-name {
-            font-size: 1.8rem;
-            font-weight: bold;
+            font-size: 2rem;
+            font-weight: 900;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
+            line-height: 1.2;
         }
 
         .tagline {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #666;
+            margin-top: 0.3rem;
+            font-weight: 500;
         }
 
         .nav-buttons {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .btn {
-            padding: 12px 25px;
+            padding: 10px 18px;
             border: none;
             border-radius: 25px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         .btn-secondary {
@@ -118,14 +114,29 @@
             border: 2px solid #667eea;
         }
 
-        .btn-secondary:hover {
-            background: #667eea;
-            color: white;
-        }
-
         .btn-success {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         .main-container {
@@ -134,39 +145,57 @@
             padding: 0 2rem;
         }
 
+        .page-section {
+            display: none;
+            animation: fadeIn 0.4s;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .search-section {
             background: white;
-            border-radius: 15px;
+            border-radius: 20px;
             padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
         }
 
         .search-box {
             display: flex;
+            flex-direction: column;
             gap: 10px;
             margin-bottom: 1.5rem;
         }
 
         .search-input {
-            flex: 1;
-            padding: 15px 20px;
+            width: 100%;
+            padding: 16px 24px;
             border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            border-radius: 15px;
             font-size: 1rem;
+            transition: all 0.3s;
         }
 
         .search-input:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .btn-search {
-            padding: 15px 40px;
+            width: 100%;
+            padding: 16px 40px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
             font-weight: 600;
             cursor: pointer;
             font-size: 1rem;
@@ -178,20 +207,22 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .search-filters {
+        .filter-container {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
+            margin-bottom: 1rem;
         }
 
         .filter-btn {
-            padding: 10px 25px;
+            padding: 10px 20px;
             border: 2px solid #e0e0e0;
             background: white;
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .filter-btn:hover, .filter-btn.active {
@@ -200,123 +231,102 @@
             border-color: #667eea;
         }
 
-        .social-share {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 2px solid #e0e0e0;
-        }
-
-        .social-share span {
-            font-weight: 600;
-            color: #666;
-        }
-
-        .social-btn {
-            padding: 8px 20px;
-            border-radius: 20px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .social-btn.facebook { background: #1877f2; color: white; }
-        .social-btn.twitter { background: #1da1f2; color: white; }
-        .social-btn.tiktok { background: #000; color: white; }
-        .social-btn.whatsapp { background: #25d366; color: white; }
-        .social-btn.instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; }
-
         .marketplace-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 2rem;
-            margin-bottom: 2rem;
+            margin-top: 2rem;
         }
 
         .product-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: all 0.3s;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: all 0.4s;
             position: relative;
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
         }
 
         .product-image {
             width: 100%;
-            height: 200px;
+            height: 220px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4rem;
-            color: white;
+            font-size: 5rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        .ai-badge {
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .badge {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255,255,255,0.95);
-            padding: 5px 15px;
+            top: 12px;
+            right: 12px;
+            padding: 6px 16px;
             border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 700;
+            background: rgba(255,255,255,0.95);
             color: #667eea;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            backdrop-filter: blur(10px);
         }
 
-        .ai-badge::before {
-            content: '🤖';
+        .seller-badge {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            top: 12px;
+            left: 12px;
         }
 
         .product-content {
-            padding: 1.5rem;
+            padding: 1.8rem;
         }
 
         .product-category {
             display: inline-block;
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 15px;
             font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
         }
 
         .product-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            color: #333;
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 0.8rem;
+            color: #2d3748;
         }
 
         .product-description {
-            color: #666;
-            margin-bottom: 1rem;
+            color: #718096;
+            margin-bottom: 1.2rem;
             line-height: 1.6;
             font-size: 0.95rem;
         }
 
         .product-stats {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: space-around;
             padding: 1rem 0;
-            border-top: 1px solid #e0e0e0;
-            border-bottom: 1px solid #e0e0e0;
-            margin-bottom: 1rem;
+            border-top: 2px solid #f0f0f0;
+            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 1.2rem;
         }
 
         .stat-item {
@@ -324,147 +334,23 @@
         }
 
         .stat-number {
-            font-size: 1.2rem;
-            font-weight: bold;
+            font-size: 1.3rem;
+            font-weight: 800;
             color: #667eea;
         }
 
         .stat-label {
             font-size: 0.75rem;
-            color: #999;
+            color: #a0aec0;
+            margin-top: 0.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .product-footer {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-        }
-
-        .commission-badge {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .referral-tiers {
-            background: white;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-top: 1rem;
-            border: 2px solid #e0e0e0;
-        }
-
-        .tier-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .tier-item:last-child {
-            border-bottom: none;
-        }
-
-        .tier-label {
-            font-weight: 600;
-            color: #667eea;
-        }
-
-        .tier-value {
-            color: #11998e;
-            font-weight: 700;
-        }
-
-        .upload-zone {
-            background: white;
-            border: 3px dashed #667eea;
-            border-radius: 15px;
-            padding: 3rem;
-            text-align: center;
-            margin-bottom: 2rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .upload-zone:hover {
-            background: #f8f9ff;
-            border-color: #764ba2;
-        }
-
-        .upload-zone h3 {
-            color: #667eea;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .verification-tracker {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-
-        .tracker-steps {
-            display: flex;
-            justify-content: space-between;
-            position: relative;
-            margin: 2rem 0;
-        }
-
-        .tracker-step {
-            flex: 1;
-            text-align: center;
-            position: relative;
-        }
-
-        .step-circle {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #e0e0e0;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 0.5rem;
-            font-weight: bold;
-            font-size: 1.2rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .step-circle.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .step-circle.completed {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        }
-
-        .step-label {
-            font-size: 0.85rem;
-            color: #666;
-            font-weight: 600;
-        }
-
-        .tracker-line {
-            position: absolute;
-            top: 25px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: #e0e0e0;
-            z-index: 1;
-        }
-
-        .tracker-line-progress {
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.5s;
         }
 
         .modal {
@@ -474,31 +360,42 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.75);
             z-index: 1000;
             overflow-y: auto;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-content {
             background: white;
             max-width: 700px;
-            margin: 50px auto;
-            padding: 2rem;
-            border-radius: 15px;
+            width: 90%;
+            margin: 2rem auto;
+            padding: 2.5rem;
+            border-radius: 20px;
             position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
         .close-modal {
             position: absolute;
-            top: 15px;
-            right: 20px;
+            top: 20px;
+            right: 25px;
             font-size: 2rem;
             cursor: pointer;
-            color: #999;
+            color: #cbd5e0;
+            transition: all 0.3s;
         }
 
         .close-modal:hover {
-            color: #333;
+            color: #2d3748;
+            transform: rotate(90deg);
         }
 
         .form-group {
@@ -507,97 +404,255 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #333;
+            margin-bottom: 0.6rem;
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 0.95rem;
         }
 
         .form-group input, .form-group textarea, .form-group select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .form-group textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 120px;
         }
 
-        .kabiru-integration {
-            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin-top: 1rem;
+        .password-toggle {
+            position: relative;
         }
 
-        .kabiru-balance {
+        .password-toggle button {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.3rem;
+            padding: 5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
             background: white;
-            color: #333;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-top: 1rem;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .stat-card-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card-label {
+            color: #718096;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .chat-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            z-index: 499;
+            transition: all 0.3s;
+        }
+
+        .chat-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        .chat-widget {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            width: 380px;
+            height: 550px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            display: none;
+            flex-direction: column;
+            z-index: 500;
+            overflow: hidden;
+        }
+
+        .chat-widget.active {
+            display: flex;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: 700;
         }
 
-        .balance-amount {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #FFD700;
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.2rem;
+            background: #f7fafc;
         }
 
-        .kabiru-integration h4 {
-            margin-bottom: 0.5rem;
+        .chat-message {
+            margin-bottom: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: 15px;
+            max-width: 80%;
+        }
+
+        .chat-message.user {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+        }
+
+        .chat-message.admin {
+            background: white;
+            color: #2d3748;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chat-input-area {
+            padding: 1rem;
+            border-top: 2px solid #e2e8f0;
+            display: flex;
+            gap: 10px;
+            background: white;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+        }
+
+        .referral-tiers {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-top: 1.5rem;
+        }
+
+        .tier-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #cbd5e0;
+        }
+
+        .tier-item:last-child {
+            border-bottom: none;
+        }
+
+        .tier-label {
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .tier-value {
+            color: #11998e;
+            font-weight: 800;
+            font-size: 1.1rem;
         }
 
         .empty-state {
             text-align: center;
-            padding: 4rem 2rem;
-            color: #999;
+            padding: 5rem 2rem;
+            color: #a0aec0;
         }
 
         .empty-state h3 {
-            font-size: 2rem;
+            font-size: 2.5rem;
             margin-bottom: 1rem;
             color: #667eea;
         }
 
-        .hidden-history {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            opacity: 0.1;
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #667eea;
+            font-size: 1.2rem;
+            font-weight: 600;
         }
 
-        .hidden-history:hover {
-            opacity: 0.5;
+        .loading::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
         }
 
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
             }
+            .brand-name {
+                font-size: 1.5rem;
+            }
             .marketplace-grid {
                 grid-template-columns: 1fr;
             }
-            .search-box {
-                flex-direction: column;
+            .chat-widget {
+                width: calc(100% - 40px);
+                height: 500px;
+                right: 20px;
             }
-            .tracker-steps {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            .tracker-line {
-                display: none;
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -609,376 +664,438 @@
                 <div class="logo">
                     <div class="sun"></div>
                 </div>
-                <div>
-                    <div class="brand-name">Tau Africa Market Search</div>
-                    <div class="tagline">AI-Powered Global Marketplace</div>
+                <div class="brand-info">
+                    <div class="brand-name">Tau Global Marketplace</div>
+                    <div class="tagline">One Stop Shopping & Advertising Platform for All Your Needs</div>
                 </div>
             </div>
             <div class="nav-buttons">
-                <button class="btn btn-secondary" onclick="showModal('loginModal')">Login</button>
-                <button class="btn btn-primary" onclick="showModal('registerModal')">Sell on Platform</button>
-                <button class="btn btn-success" onclick="showModal('marketeerModal')">Become Marketeer</button>
+                <button class="btn btn-secondary" onclick="showPage('myAccount')">👤 My Account</button>
+                <button class="btn btn-primary" onclick="showPage('sellProduct')">📦 Sell Product</button>
+                <button class="btn btn-success" onclick="showPage('buyProduct')">🛒 Buy Product</button>
+                <button class="btn btn-warning" onclick="showPage('marketProduct')">📢 Market Product</button>
+                <button class="btn btn-info" onclick="showAdminPortal()">🔐 Admin Portal</button>
+                <button class="btn btn-danger" onclick="showPage('newProducts')">🆕 New Products</button>
             </div>
         </div>
     </div>
 
     <div class="main-container">
-        <!-- Search Section -->
-        <div class="search-section">
-            <div class="search-box">
-                <input type="text" class="search-input" id="searchInput" placeholder="Search for apps, products, services, websites...">
-                <button class="btn-search" onclick="performSearch()">🔍 Search</button>
+        <!-- Buy Product / Marketplace (Default) -->
+        <div id="buyProduct" class="page-section active">
+            <div class="search-section">
+                <h2 style="margin-bottom: 1.5rem; color: #2d3748; font-size: 1.8rem;">🛒 Global Marketplace</h2>
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search for products, services, apps, websites...">
+                    <button class="btn-search" onclick="performSearch()">🔍 Search</button>
+                </div>
+                <div class="filter-container">
+                    <button class="filter-btn active" onclick="filterCategory('all')">All</button>
+                    <button class="filter-btn" onclick="filterCategory('physical')">📦 Physical Products</button>
+                    <button class="filter-btn" onclick="filterCategory('service')">💼 Services</button>
+                    <button class="filter-btn" onclick="filterCategory('app')">📱 Apps</button>
+                    <button class="filter-btn" onclick="filterCategory('website')">🌐 Websites</button>
+                    <button class="filter-btn" onclick="filterCategory('software')">💻 Software</button>
+                </div>
             </div>
-            <div class="search-filters">
-                <button class="filter-btn active" onclick="filterCategory('all')">All Items</button>
-                <button class="filter-btn" onclick="filterCategory('apps')">📱 Apps</button>
-                <button class="filter-btn" onclick="filterCategory('products')">📦 Products</button>
-                <button class="filter-btn" onclick="filterCategory('services')">💼 Services</button>
-                <button class="filter-btn" onclick="filterCategory('websites')">🌐 Websites</button>
-            </div>
-            <div class="social-share">
-                <span>Share Marketplace:</span>
-                <button class="social-btn facebook" onclick="shareToSocial('facebook')">Facebook</button>
-                <button class="social-btn twitter" onclick="shareToSocial('twitter')">Twitter</button>
-                <button class="social-btn tiktok" onclick="shareToSocial('tiktok')">TikTok</button>
-                <button class="social-btn whatsapp" onclick="shareToSocial('whatsapp')">WhatsApp</button>
-                <button class="social-btn instagram" onclick="shareToSocial('instagram')">Instagram</button>
-            </div>
-        </div>
 
-        <!-- Public Marketplace Portal -->
-        <div id="marketplacePortal">
-            <h2 style="margin-bottom: 2rem; color: #333; font-size: 2rem;">🌍 Public Marketplace</h2>
             <div class="marketplace-grid" id="marketplaceGrid">
-                <!-- Dynamic products will load here -->
+                <div class="loading">Loading marketplace products</div>
             </div>
         </div>
 
-        <!-- Upload Zone for Verified Sellers -->
-        <div id="uploadSection" style="display:none;">
-            <div class="upload-zone" onclick="showModal('uploadModal')">
-                <h3>📤 Upload Your Items Here</h3>
-                <p style="color: #666; margin-bottom: 1rem;">Click to upload products, services, apps, or websites</p>
-                <p style="color: #999; font-size: 0.9rem;">Verification code required | Contact admin if needed</p>
-            </div>
-
-            <div class="verification-tracker">
-                <h3 style="margin-bottom: 1.5rem; color: #333;">Your Upload Progress</h3>
-                <div class="tracker-steps">
-                    <div class="tracker-line">
-                        <div class="tracker-line-progress" id="trackerProgress" style="width: 0%"></div>
-                    </div>
-                    <div class="tracker-step">
-                        <div class="step-circle" id="step1">1</div>
-                        <div class="step-label">Submitted</div>
-                    </div>
-                    <div class="tracker-step">
-                        <div class="step-circle" id="step2">2</div>
-                        <div class="step-label">Verification</div>
-                    </div>
-                    <div class="tracker-step">
-                        <div class="step-circle" id="step3">3</div>
-                        <div class="step-label">Validation</div>
-                    </div>
-                    <div class="tracker-step">
-                        <div class="step-circle" id="step4">4</div>
-                        <div class="step-label">Pass/Fail</div>
-                    </div>
-                    <div class="tracker-step">
-                        <div class="step-circle" id="step5">5</div>
-                        <div class="step-label">Upload Code</div>
-                    </div>
-                    <div class="tracker-step">
-                        <div class="step-circle" id="step6">6</div>
-                        <div class="step-label">Uploaded</div>
-                    </div>
-                    <div class="tracker-step">
-                        <div class="step-circle" id="step7">7</div>
-                        <div class="step-label">Marketing</div>
-                    </div>
-                    <div class="tracker-step">
-                        <div class="step-circle" id="step8">8</div>
-                        <div class="step-label">Live & Earning</div>
-                    </div>
-                </div>
-                <div id="trackerMessage" style="text-align: center; color: #667eea; font-weight: 600; margin-top: 1rem;">
-                    Start by uploading your first item!
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
-            <h2>Login to Your Account</h2>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="loginEmail" placeholder="Enter your email">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="loginPassword" placeholder="Enter your password">
-            </div>
-            <button class="btn btn-primary" style="width:100%;" onclick="loginUser()">Login</button>
-        </div>
-    </div>
-
-    <!-- Register Seller Modal -->
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('registerModal')">&times;</span>
-            <h2>Register as Seller</h2>
-            <form id="registerForm" onsubmit="registerSeller(event)">
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" required>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" required>
-                </div>
-                <div class="form-group">
-                    <label>Business Name</label>
-                    <input type="text" required>
-                </div>
-                <div class="form-group">
-                    <label>Category</label>
-                    <select required>
-                        <option value="">Select Category</option>
-                        <option value="apps">Mobile/Web App</option>
-                        <option value="products">Physical Product</option>
-                        <option value="services">Service</option>
-                        <option value="websites">Website/Platform</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width:100%;">Register & Start Verification</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Marketeer Registration Modal -->
-    <div id="marketeerModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('marketeerModal')">&times;</span>
-            <h2>Become a Marketeer</h2>
-            <p style="margin-bottom: 1.5rem; color: #666;">Earn through our 5-tier referral system + 5% platform commission</p>
+        <!-- My Account Section -->
+        <div id="myAccount" class="page-section">
+            <h2 style="margin-bottom: 2rem; color: #2d3748; font-size: 2rem;">👤 My Account</h2>
             
-            <div class="referral-tiers">
-                <h4 style="margin-bottom: 1rem; color: #667eea;">💰 Referral Earnings Structure</h4>
-                <div class="tier-item">
-                    <span class="tier-label">Level 1 (Direct Referrals)</span>
-                    <span class="tier-value">50 iKb</span>
-                </div>
-                <div class="tier-item">
-                    <span class="tier-label">Level 2</span>
-                    <span class="tier-value">35 iKb</span>
-                </div>
-                <div class="tier-item">
-                    <span class="tier-label">Level 3</span>
-                    <span class="tier-value">15 iKb</span>
-                </div>
-                <div class="tier-item">
-                    <span class="tier-label">Level 4</span>
-                    <span class="tier-value">10 iKb</span>
-                </div>
-                <div class="tier-item">
-                    <span class="tier-label">Level 5</span>
-                    <span class="tier-value">5 iKb</span>
+            <div id="loginView">
+                <div style="max-width: 550px; margin: 0 auto;">
+                    <div style="background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+                        <h3 style="margin-bottom: 2rem; font-size: 1.5rem;">Login or Create Account</h3>
+                        
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="accountEmail" placeholder="your@email.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Password</label>
+                            <div class="password-toggle">
+                                <input type="password" id="accountPassword" placeholder="Enter your password">
+                                <button onclick="togglePassword('accountPassword')" type="button">👁️</button>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem; padding: 14px;" onclick="loginAccount()">Login</button>
+                        <button class="btn btn-success" style="width: 100%; margin-bottom: 1rem; padding: 14px;" onclick="createAccount()">Create New Account</button>
+                        <button class="btn" style="width: 100%; background: #f7fafc; color: #2d3748; padding: 14px;" onclick="showModal('resetPasswordModal')">🔑 Reset Password</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="kabiru-integration">
-                <h4>⛏️ Kabiru Mining Integration</h4>
-                <p style="font-size: 0.9rem;">All earnings automatically sync with Kabiru Mining App for currency mining and conversion</p>
+            <div id="accountDashboard" style="display: none;">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-number" id="pointsDisplay">0</div>
+                        <div class="stat-card-label">iKb Points</div>
+                        <button class="btn btn-success" style="width: 100%; margin-top: 1rem;" onclick="transferToKabiru()" id="transferBtn" disabled>Transfer to Kabiru (1000+ pts)</button>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-number" id="salesDisplay">0</div>
+                        <div class="stat-card-label">Total Sales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-number" id="referralsDisplay">0</div>
+                        <div class="stat-card-label">Referrals</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-number" id="productsDisplay">0</div>
+                        <div class="stat-card-label">My Products</div>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 2.5rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem;">💰 5-Level Referral Earnings</h3>
+                    <div class="referral-tiers">
+                        <div class="tier-item">
+                            <span class="tier-label">🥇 Level 1 (Direct Referrals)</span>
+                            <span class="tier-value" id="level1Earnings">0 iKb</span>
+                        </div>
+                        <div class="tier-item">
+                            <span class="tier-label">🥈 Level 2</span>
+                            <span class="tier-value" id="level2Earnings">0 iKb</span>
+                        </div>
+                        <div class="tier-item">
+                            <span class="tier-label">🥉 Level 3</span>
+                            <span class="tier-value" id="level3Earnings">0 iKb</span>
+                        </div>
+                        <div class="tier-item">
+                            <span class="tier-label">🏅 Level 4</span>
+                            <span class="tier-value" id="level4Earnings">0 iKb</span>
+                        </div>
+                        <div class="tier-item">
+                            <span class="tier-label">⭐ Level 5</span>
+                            <span class="tier-value" id="level5Earnings">0 iKb</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 2.5rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem;">📊 My Products</h3>
+                    <div id="userProductsList"></div>
+                </div>
+
+                <button class="btn btn-secondary" onclick="logoutAccount()">Logout</button>
+            </div>
+        </div>
+
+        <!-- Sell Product Section -->
+        <div id="sellProduct" class="page-section">
+            <h2 style="margin-bottom: 2rem; color: #2d3748; font-size: 2rem;">📦 Sell Your Product/Service</h2>
+            
+            <div style="max-width: 900px; margin: 0 auto; background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+                <form id="sellProductForm" onsubmit="submitProduct(event)">
+                    <div class="form-group">
+                        <label>Product/Service Name *</label>
+                        <input type="text" name="productName" required placeholder="Enter product name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="physical">📦 Physical Product</option>
+                            <option value="service">💼 Service</option>
+                            <option value="app">📱 Mobile/Web App</option>
+                            <option value="website">🌐 Website/Platform</option>
+                            <option value="software">💻 Software</option>
+                            <option value="value">💎 Digital Value/Asset</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Detailed Description *</label>
+                        <textarea name="description" required placeholder="Provide comprehensive details about your product/service"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Price (USD) *</label>
+                        <input type="number" name="price" step="0.01" required placeholder="0.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Product Image *</label>
+                        <input type="file" name="productImage" accept="image/*" required>
+                        <small style="color: #a0aec0; display: block; margin-top: 0.5rem;">Max 5MB | Formats: JPG, PNG, WebP</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Product URL/Link</label>
+                        <input type="url" name="productUrl" placeholder="https://yourproduct.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Stock/Availability *</label>
+                        <input type="number" name="stock" required placeholder="Quantity available (or 999 for unlimited)">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Shipping Options</label>
+                        <select name="shipping">
+                            <option value="worldwide">🌍 Worldwide Shipping</option>
+                            <option value="regional">🌎 Regional Only</option>
+                            <option value="local">📍 Local Pickup</option>
+                            <option value="digital">💾 Digital/No Shipping</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tags (comma separated)</label>
+                        <input type="text" name="tags" placeholder="e.g., electronics, gadgets, tech">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Contact Email *</label>
+                        <input type="email" name="contactEmail" required placeholder="your@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Contact Phone</label>
+                        <input type="tel" name="contactPhone" placeholder="+1234567890">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 1.1rem;">Submit for Verification ✅</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Market Product Section -->
+        <div id="marketProduct" class="page-section">
+            <h2 style="margin-bottom: 2rem; color: #2d3748; font-size: 2rem;">📢 Become a Marketeer</h2>
+            
+            <div id="marketeerLoginView">
+                <div style="max-width: 700px; margin: 0 auto; background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem;">Join Our Marketing Network</h3>
+                    <p style="color: #718096; margin-bottom: 2rem; font-size: 1.05rem;">Earn through our 5-tier referral system synced with Kabiru Mining</p>
+                    
+                    <div class="referral-tiers">
+                        <h4 style="margin-bottom: 1.5rem; color: #667eea; font-size: 1.2rem;">💰 Earnings Structure Per Sale</h4>
+                        <div class="tier-item">
+                            <span class="tier-label">🥇 Level 1 (Your Direct Referrals)</span>
+                            <span class="tier-value">50 iKb</span>
+                        </div>
+                        <div class="tier-item">
+                            <span class="tier-label">🥈 Level 2 (Their Referrals)</span>
+                            <span class="tier-value">35 iKb</span>
+                        </div>
+                        <div class="tier-item">
+                            <span class="tier-label">🥉 Level 3 (3rd Generation)</span>
+                            <span class="tier-value">15 iKb</span>
+                        </div>
+                        <div class="tier-item">
+                            <span class="tier-label">🏅 Level 4 (4th Generation)</span>
+                            <span class="tier-value">10 iKb</span>
+                        </div>
+                        <div class="tier-item">
+                            <span class="tier-label">⭐ Level 5 (5th Generation)</span>
+                            <span class="tier-value">5 iKb</span>
+                        </div>
+                    </div>
+
+                    <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: white; padding: 2rem; border-radius: 15px; margin-top: 2rem;">
+                        <h4 style="margin-bottom: 1rem; font-size: 1.2rem;">⛏️ Kabiru Mining Integration</h4>
+                        <p style="font-size: 1rem; line-height: 1.6;">All earnings automatically sync with Kabiru Mining App. Once you reach 1000 iKb points, transfer them to start currency mining!</p>
+                    </div>
+
+                    <form id="marketeerForm" onsubmit="registerMarketeer(event)" style="margin-top: 2rem;">
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" name="fullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password *</label>
+                            <div class="password-toggle">
+                                <input type="password" id="marketeerPassword" name="password" required>
+                                <button type="button" onclick="togglePassword('marketeerPassword')">👁️</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" name="phone" placeholder="+1234567890">
+                        </div>
+                        <button type="submit" class="btn btn-success" style="width: 100%; padding: 16px; font-size: 1.1rem;">Register as Marketeer 🚀</button>
+                    </form>
+                </div>
             </div>
 
-            <form id="marketeerForm" onsubmit="registerMarketeer(event)" style="margin-top: 2rem;">
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" required>
+            <div id="marketeerDashboard" style="display: none;">
+                <div style="background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem;">🔗 Generate Referral Links</h3>
+                    <p style="color: #718096; margin-bottom: 1.5rem;">Select any product to generate your unique referral link and start earning!</p>
+                    <button class="btn btn-success" style="padding: 14px 30px; font-size: 1.05rem;" onclick="openReferralGenerator()">Generate Referral Link 🎯</button>
                 </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" required>
+
+                <div style="background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem;">📊 Your Referral Performance</h3>
+                    <div id="referralLinksContainer"></div>
                 </div>
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" required>
-                </div>
-                <button type="submit" class="btn btn-success" style="width:100%;">Register as Marketeer</button>
-            </form>
+            </div>
+        </div>
+
+        <!-- New Products Section -->
+        <div id="newProducts" class="page-section">
+            <h2 style="margin-bottom: 2rem; color: #2d3748; font-size: 2rem;">🆕 Newly Registered Products</h2>
+            <p style="color: #718096; margin-bottom: 2rem; font-size: 1.05rem;">Products awaiting verification or recently approved</p>
+            <div class="marketplace-grid" id="newProductsGrid">
+                <div class="loading">Loading new products</div>
+            </div>
         </div>
     </div>
 
-    <!-- Upload Item Modal -->
-    <div id="uploadModal" class="modal">
+    <!-- Modals -->
+    <div id="resetPasswordModal" class="modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('uploadModal')">&times;</span>
-            <h2>Upload Your Item</h2>
-            <form id="uploadForm" onsubmit="uploadItem(event)">
-                <div class="form-group">
-                    <label>Verification Code</label>
-                    <input type="text" id="verificationCode" placeholder="Enter your verification code" required>
-                    <small style="color: #999;">Don't have a code? <a href="#" onclick="contactAdmin()">Contact Admin</a></small>
-                </div>
-                <div class="form-group">
-                    <label>Item Name</label>
-                    <input type="text" id="itemName" required>
-                </div>
-                <div class="form-group">
-                    <label>Category</label>
-                    <select id="itemCategory" required>
-                        <option value="apps">📱 App</option>
-                        <option value="products">📦 Product</option>
-                        <option value="services">💼 Service</option>
-                        <option value="websites">🌐 Website</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="itemDescription" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Product Image</label>
-                    <input type="file" id="productImage" accept="image/*" required style="padding: 8px;">
-                    <small style="color: #999;">Max size: 5MB | Formats: JPG, PNG, WebP</small>
-                </div>
-                <div class="form-group">
-                    <label>URL/Link</label>
-                    <input type="url" id="itemUrl" required>
-                </div>
-                <div class="form-group">
-                    <label>Price (USD)</label>
-                    <input type="number" id="itemPrice" step="0.01" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width:100%;">Submit for Verification</button>
-            </form>
+            <span class="close-modal" onclick="closeModal('resetPasswordModal')">&times;</span>
+            <h2 style="margin-bottom: 2rem; font-size: 1.8rem;">🔑 Reset Password</h2>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="resetEmail" placeholder="your@email.com">
+            </div>
+            <button class="btn btn-primary" style="width: 100%; padding: 14px;" onclick="sendPasswordReset()">Send Reset Link 📧</button>
         </div>
     </div>
 
-    <!-- History Modal -->
-    <div id="historyModal" class="modal">
+    <div id="adminAccessModal" class="modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('historyModal')">&times;</span>
-            <h2>About Tau Africa Market Search</h2>
-            <div style="line-height: 1.8; color: #333;">
-                <h3>Our Foundation Story</h3>
-                <p><strong>Founded by Magero Asa Rateng</strong></p>
-                <p>Tau Africa Market Search was established under the visionary leadership of Magero Asa Rateng, through the collaborative efforts of <strong>Tau Africa International Foundation</strong> and <strong>Valenta Holdings</strong>.</p>
-                
-                <h3 style="margin-top: 1.5rem;">Our Mission</h3>
-                <p>The platform was created with a profound purpose: to help communities connect, share information, and exchange market items by creating a common marketplace that transcends geographical boundaries.</p>
-                
-                <h3 style="margin-top: 1.5rem;">Building Economic Ecosystems</h3>
-                <p>We are committed to building a robust economic ecosystem through AI-powered and human-driven marketing that fosters investment opportunities and international market access.</p>
-                
-                <p style="margin-top: 2rem; font-style: italic; color: #667eea;">
-                    "Together, we are not just building a marketplace - we are building prosperity, one connection at a time."<br>
-                    - Magero Asa Rateng, Founder
-                </p>
+            <span class="close-modal" onclick="closeModal('adminAccessModal')">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.8rem;">🔐 Admin Portal Access</h2>
+            <p style="color: #718096; margin-bottom: 2rem;">Enter your admin access code to proceed</p>
+            <div class="form-group">
+                <label>Access Code</label>
+                <input type="password" id="adminCode" placeholder="Enter admin code">
+            </div>
+            <button class="btn btn-info" style="width: 100%; padding: 14px;" onclick="verifyAdminAccess()">Access Admin Panel 🚀</button>
+        </div>
+    </div>
+
+    <div id="referralGeneratorModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('referralGeneratorModal')">&times;</span>
+            <h2 style="margin-bottom: 2rem; font-size: 1.8rem;">🔗 Generate Referral Link</h2>
+            <div class="form-group">
+                <label>Select Product</label>
+                <select id="productSelect" style="font-size: 1rem;">
+                    <option value="">Loading products...</option>
+                </select>
+            </div>
+            <button class="btn btn-success" style="width: 100%; padding: 14px; margin-bottom: 1rem;" onclick="generateReferralLink()">Generate Link 🎯</button>
+            <div id="generatedLinkDisplay" style="display: none; padding: 1.5rem; background: #f7fafc; border-radius: 15px; border: 2px solid #667eea;">
+                <p style="font-weight: 700; margin-bottom: 1rem; color: #2d3748; font-size: 1.05rem;">Your Referral Link:</p>
+                <input type="text" id="generatedLink" readonly style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 10px; font-size: 0.95rem; background: white;">
+                <button class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 12px;" onclick="copyReferralLink()">📋 Copy Link</button>
+                <p style="margin-top: 1rem; color: #718096; font-size: 0.9rem;">Share this link on social media, email, or any platform to earn commissions!</p>
             </div>
         </div>
     </div>
 
-    <button class="hidden-history" onclick="showModal('historyModal')" title="Platform History"></button>
+    <!-- Chat Widget -->
+    <button class="chat-toggle" onclick="toggleChat()">💬</button>
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header">
+            <span style="font-size: 1.1rem;">💬 Support Chat</span>
+            <button onclick="toggleChat()" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.5rem; padding: 0;">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message admin">
+                <p>👋 Welcome! How can we help you today?</p>
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+            <button class="btn btn-primary" onclick="sendChatMessage()">Send</button>
+        </div>
+    </div>
 
     <script type="module">
-        // Firebase configuration
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc, orderBy, serverTimestamp, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
-        // TODO: Replace with your Firebase configuration
         const firebaseConfig = {
-  apiKey: "AIzaSyAaUOObFv8KU6KSYC7Uj9c2ELPjbdu-JX0",
-  authDomain: "tau-marketplace.firebaseapp.com",
-  projectId: "tau-marketplace",
-  storageBucket: "tau-marketplace.firebasestorage.app",
-  messagingSenderId: "692166197354",
-  appId: "1:692166197354:web:b002dd1283f4b247a68a13"
-};
+            apiKey: "AIzaSyAaUOObFv8KU6KSYC7Uj9c2ELPjbdu-JX0",
+            authDomain: "tau-marketplace.firebaseapp.com",
+            projectId: "tau-marketplace",
+            storageBucket: "tau-marketplace.firebasestorage.app",
+            messagingSenderId: "692166197354",
+            appId: "1:692166197354:web:b002dd1283f4b247a68a13"
+        };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const storage = getStorage(app);
 
-        window.auth = auth;
-        window.db = db;
-        window.storage = storage;
+        window.firebaseServices = { auth, db, storage };
         window.currentUser = null;
 
-        // Auth state observer
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 window.currentUser = user;
-                document.getElementById('uploadSection').style.display = 'block';
-                loadUserProgress();
+                loadUserData();
             } else {
                 window.currentUser = null;
-                document.getElementById('uploadSection').style.display = 'none';
+                showLoginView();
             }
         });
 
-        // Load marketplace items
         loadMarketplace();
 
         async function loadMarketplace() {
             const grid = document.getElementById('marketplaceGrid');
-            grid.innerHTML = '<div class="empty-state"><h3>🌍 Loading Global Marketplace...</h3><p>AI-powered products from around the world</p></div>';
-
+            grid.innerHTML = createSampleProducts();
+            
             try {
-                const q = query(
-                    collection(db, 'marketplace'),
-                    where('status', '==', 'live'),
-                    orderBy('views', 'desc')
-                );
+                const q = query(collection(db, 'products'), where('status', '==', 'approved'), orderBy('createdAt', 'desc'));
                 const snapshot = await getDocs(q);
-
-                if (snapshot.empty) {
-                    grid.innerHTML = createSampleMarketplace();
-                } else {
+                
+                if (!snapshot.empty) {
                     grid.innerHTML = '';
                     snapshot.forEach(doc => {
-                        const item = doc.data();
-                        grid.innerHTML += createProductCard(item, doc.id);
+                        const product = doc.data();
+                        grid.innerHTML += createProductCard(product, doc.id);
                     });
                 }
             } catch (error) {
                 console.error('Error loading marketplace:', error);
-                grid.innerHTML = createSampleMarketplace();
             }
         }
 
-        function createSampleMarketplace() {
-            const categories = ['apps', 'products', 'services', 'websites'];
-            const icons = { apps: '📱', products: '📦', services: '💼', websites: '🌐' };
+        function createSampleProducts() {
             const samples = [
-                { name: 'TaskMaster Pro', category: 'apps', desc: 'AI-powered productivity app with smart task management', views: 1523, sales: 89, rating: 4.8 },
-                { name: 'EcoSmart Water Bottle', category: 'products', desc: 'Temperature-controlled smart bottle with hydration tracking', views: 2341, sales: 156, rating: 4.6 },
-                { name: 'Digital Marketing Course', category: 'services', desc: 'Comprehensive online marketing training by industry experts', views: 987, sales: 67, rating: 4.9 },
-                { name: 'AfriConnect Directory', category: 'websites', desc: 'Pan-African business directory connecting entrepreneurs', views: 1876, sales: 123, rating: 4.7 },
-                { name: 'FitLife Wellness App', category: 'apps', desc: 'Personalized fitness and nutrition planning with AI coach', views: 3201, sales: 245, rating: 4.9 },
-                { name: 'Solar Power Kit', category: 'products', desc: 'Complete renewable energy solution for homes and businesses', views: 1654, sales: 98, rating: 4.5 },
+                { name: 'AI TaskMaster Pro', category: 'app', desc: 'AI-powered productivity suite with smart automation', price: 49.99, views: 1523, sales: 89, rating: 4.8, icon: '📱' },
+                { name: 'EcoSmart Bottle', category: 'physical', desc: 'Temperature-controlled smart bottle with hydration tracking', price: 39.99, views: 2341, sales: 156, rating: 4.6, icon: '📦' },
+                { name: 'Digital Marketing Mastery', category: 'service', desc: 'Comprehensive online marketing training program', price: 299.99, views: 987, sales: 67, rating: 4.9, icon: '💼' },
+                { name: 'AfriConnect Hub', category: 'website', desc: 'Pan-African business directory platform', price: 19.99, views: 1876, sales: 123, rating: 4.7, icon: '🌐' },
+                { name: 'FitLife AI Coach', category: 'app', desc: 'Personalized fitness and nutrition with AI', price: 29.99, views: 3201, sales: 245, rating: 4.9, icon: '📱' },
+                { name: 'Solar Power Complete Kit', category: 'physical', desc: 'Renewable energy solution for homes', price: 1999.99, views: 1654, sales: 98, rating: 4.5, icon: '📦' },
             ];
 
             return samples.map((item, idx) => `
                 <div class="product-card" data-category="${item.category}">
                     <div class="product-image">
-                        ${icons[item.category]}
-                        <div class="ai-badge">AI Marketing</div>
+                        <span style="font-size: 5rem;">${item.icon}</span>
+                        <div class="badge">🤖 AI Marketing</div>
                     </div>
                     <div class="product-content">
-                        <span class="product-category">${item.category.toUpperCase()}</span>
+                        <span class="product-category">${item.category}</span>
                         <h3 class="product-title">${item.name}</h3>
                         <p class="product-description">${item.desc}</p>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #667eea; margin-bottom: 1rem;">$${item.price}</div>
                         <div class="product-stats">
                             <div class="stat-item">
                                 <div class="stat-number">${item.views}</div>
@@ -994,241 +1111,307 @@ const app = initializeApp(firebaseConfig);
                             </div>
                         </div>
                         <div class="product-footer">
-                            <button class="btn btn-primary" onclick="viewProduct('sample_${idx}')">View Details</button>
-                            <button class="btn btn-success" onclick="generateReferralLink('sample_${idx}')">Get Referral Link</button>
-                        </div>
-                        <div class="referral-tiers" style="margin-top: 1rem;">
-                            <div style="font-weight: 600; margin-bottom: 0.5rem; color: #667eea;">Earn with 5-Level Referrals:</div>
-                            <div style="display: flex; gap: 10px; flex-wrap: wrap; font-size: 0.85rem;">
-                                <span style="background: #11998e; color: white; padding: 4px 10px; border-radius: 10px;">L1: 50iKb</span>
-                                <span style="background: #38ef7d; color: white; padding: 4px 10px; border-radius: 10px;">L2: 35iKb</span>
-                                <span style="background: #667eea; color: white; padding: 4px 10px; border-radius: 10px;">L3: 15iKb</span>
-                                <span style="background: #764ba2; color: white; padding: 4px 10px; border-radius: 10px;">L4: 10iKb</span>
-                                <span style="background: #FFD700; color: #333; padding: 4px 10px; border-radius: 10px;">L5: 5iKb</span>
-                            </div>
+                            <button class="btn btn-primary" onclick="viewProduct('sample_${idx}')" style="flex: 1;">View Details</button>
+                            <button class="btn btn-success" onclick="generateQuickReferral('sample_${idx}')" style="flex: 1;">Get Link 🔗</button>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        function createProductCard(item, id) {
-            const icons = { apps: '📱', products: '📦', services: '💼', websites: '🌐' };
+        function createProductCard(product, id) {
+            const icons = { physical: '📦', service: '💼', app: '📱', website: '🌐', software: '💻', value: '💎' };
             return `
-                <div class="product-card" data-category="${item.category}">
+                <div class="product-card" data-category="${product.category}">
                     <div class="product-image">
-                        ${icons[item.category]}
-                        <div class="ai-badge">AI Marketing</div>
+                        ${product.imageURL ? `<img src="${product.imageURL}" alt="${product.name}">` : `<span style="font-size: 5rem;">${icons[product.category] || '📦'}</span>`}
+                        <div class="badge">🤖 AI Marketing</div>
+                        ${product.sellerBadge ? '<div class="seller-badge">⭐ Verified Seller</div>' : ''}
                     </div>
                     <div class="product-content">
-                        <span class="product-category">${item.category.toUpperCase()}</span>
-                        <h3 class="product-title">${item.name}</h3>
-                        <p class="product-description">${item.description}</p>
+                        <span class="product-category">${product.category}</span>
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-description">${product.description}</p>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #667eea; margin-bottom: 1rem;">$${product.price}</div>
                         <div class="product-stats">
                             <div class="stat-item">
-                                <div class="stat-number">${item.views || 0}</div>
+                                <div class="stat-number">${product.views || 0}</div>
                                 <div class="stat-label">Views</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-number">${item.sales || 0}</div>
+                                <div class="stat-number">${product.sales || 0}</div>
                                 <div class="stat-label">Sales</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-number">${item.rating || 5}</div>
+                                <div class="stat-number">${product.rating || 5.0}</div>
                                 <div class="stat-label">Rating</div>
                             </div>
                         </div>
                         <div class="product-footer">
-                            <button class="btn btn-primary" onclick="viewProduct('${id}')">View Details</button>
-                            <button class="btn btn-success" onclick="generateReferralLink('${id}')">Get Referral Link</button>
-                        </div>
-                        <div class="referral-tiers" style="margin-top: 1rem;">
-                            <div style="font-weight: 600; margin-bottom: 0.5rem; color: #667eea;">Earn with 5-Level Referrals:</div>
-                            <div style="display: flex; gap: 10px; flex-wrap: wrap; font-size: 0.85rem;">
-                                <span style="background: #11998e; color: white; padding: 4px 10px; border-radius: 10px;">L1: 50iKb</span>
-                                <span style="background: #38ef7d; color: white; padding: 4px 10px; border-radius: 10px;">L2: 35iKb</span>
-                                <span style="background: #667eea; color: white; padding: 4px 10px; border-radius: 10px;">L3: 15iKb</span>
-                                <span style="background: #764ba2; color: white; padding: 4px 10px; border-radius: 10px;">L4: 10iKb</span>
-                                <span style="background: #FFD700; color: #333; padding: 4px 10px; border-radius: 10px;">L5: 5iKb</span>
-                            </div>
+                            <button class="btn btn-primary" onclick="viewProduct('${id}')" style="flex: 1;">View Details</button>
+                            <button class="btn btn-success" onclick="generateQuickReferral('${id}')" style="flex: 1;">Get Link 🔗</button>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        async function loadUserProgress() {
-            // Load user's upload progress
+        async function loadUserData() {
+            if (!window.currentUser) return;
+
+            document.getElementById('loginView').style.display = 'none';
+            document.getElementById('accountDashboard').style.display = 'block';
+
             try {
-                const q = query(
-                    collection(db, 'uploads'),
-                    where('userId', '==', window.currentUser.uid),
-                    orderBy('createdAt', 'desc')
-                );
-                const snapshot = await getDocs(q);
-                
-                if (!snapshot.empty) {
-                    const latestUpload = snapshot.docs[0].data();
-                    updateProgressTracker(latestUpload.stage || 1);
+                const userDoc = await getDoc(doc(db, 'users', window.currentUser.uid));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    document.getElementById('pointsDisplay').textContent = userData.points || 0;
+                    document.getElementById('salesDisplay').textContent = userData.sales || 0;
+                    document.getElementById('referralsDisplay').textContent = userData.referrals || 0;
+                    document.getElementById('productsDisplay').textContent = userData.products || 0;
+
+                    const transferBtn = document.getElementById('transferBtn');
+                    if ((userData.points || 0) >= 1000) {
+                        transferBtn.disabled = false;
+                    }
+
+                    document.getElementById('level1Earnings').textContent = `${userData.level1Earnings || 0} iKb`;
+                    document.getElementById('level2Earnings').textContent = `${userData.level2Earnings || 0} iKb`;
+                    document.getElementById('level3Earnings').textContent = `${userData.level3Earnings || 0} iKb`;
+                    document.getElementById('level4Earnings').textContent = `${userData.level4Earnings || 0} iKb`;
+                    document.getElementById('level5Earnings').textContent = `${userData.level5Earnings || 0} iKb`;
                 }
             } catch (error) {
-                console.error('Error loading progress:', error);
+                console.error('Error loading user data:', error);
             }
         }
 
-        function updateProgressTracker(stage) {
-            const stages = ['submitted', 'verification', 'validation', 'review', 'codeGenerated', 'uploaded', 'marketing', 'live'];
-            const messages = {
-                1: 'Your item has been submitted',
-                2: 'Admin is verifying your submission',
-                3: 'Content validation in progress',
-                4: 'Admin review - Pass/Fail decision',
-                5: 'Upload code generated! Check your email',
-                6: 'Item successfully uploaded',
-                7: 'AI marketing campaign active',
-                8: 'Live on marketplace and earning!'
-            };
-
-            for (let i = 1; i <= 8; i++) {
-                const circle = document.getElementById(`step${i}`);
-                if (i < stage) {
-                    circle.classList.add('completed');
-                    circle.classList.remove('active');
-                } else if (i === stage) {
-                    circle.classList.add('active');
-                    circle.classList.remove('completed');
-                } else {
-                    circle.classList.remove('completed', 'active');
-                }
-            }
-
-            const progress = ((stage - 1) / 7) * 100;
-            document.getElementById('trackerProgress').style.width = progress + '%';
-            document.getElementById('trackerMessage').textContent = messages[stage] || 'Processing...';
+        function showLoginView() {
+            document.getElementById('loginView').style.display = 'block';
+            document.getElementById('accountDashboard').style.display = 'none';
         }
 
         window.loadMarketplace = loadMarketplace;
-        window.updateProgressTracker = updateProgressTracker;
+        window.loadUserData = loadUserData;
     </script>
 
     <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+
         function showModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
+            document.getElementById(modalId).classList.add('active');
         }
 
         function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
+            document.getElementById(modalId).classList.remove('active');
         }
 
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        async function loginAccount() {
+            const email = document.getElementById('accountEmail').value;
+            const password = document.getElementById('accountPassword').value;
+
+            if (!email || !password) {
+                alert('Please enter email and password');
+                return;
             }
-        }
-
-        async function loginUser() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
 
             try {
                 const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-                await signInWithEmailAndPassword(window.auth, email, password);
-                alert('Login successful!');
-                closeModal('loginModal');
+                await signInWithEmailAndPassword(window.firebaseServices.auth, email, password);
+                alert('✅ Login successful!');
             } catch (error) {
-                alert('Login failed: ' + error.message);
+                alert('❌ Login failed: ' + error.message);
             }
         }
 
-        async function registerSeller(e) {
-            e.preventDefault();
-            alert('Seller registration initiated! You will receive verification steps via email.');
-            closeModal('registerModal');
-        }
+        async function createAccount() {
+            const email = document.getElementById('accountEmail').value;
+            const password = document.getElementById('accountPassword').value;
 
-        async function registerMarketeer(e) {
-            e.preventDefault();
-            alert('Marketeer registration successful! Your referral system is now active. Start earning with 5-level referrals synced to Kabiru Mining App!');
-            closeModal('marketeerModal');
-        }
-
-        async function uploadItem(e) {
-            e.preventDefault();
-            const code = document.getElementById('verificationCode').value;
-
-            // Validate verification code
-            if (code.length < 6) {
-                alert('Invalid verification code. Please contact admin for assistance.');
+            if (!email || !password) {
+                alert('Please enter email and password');
                 return;
             }
+
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters');
+                return;
+            }
+
+            try {
+                const { createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                const userCredential = await createUserWithEmailAndPassword(window.firebaseServices.auth, email, password);
+                
+                await setDoc(doc(window.firebaseServices.db, 'users', userCredential.user.uid), {
+                    email: email,
+                    points: 0,
+                    sales: 0,
+                    referrals: 0,
+                    products: 0,
+                    level1Earnings: 0,
+                    level2Earnings: 0,
+                    level3Earnings: 0,
+                    level4Earnings: 0,
+                    level5Earnings: 0,
+                    createdAt: new Date().toISOString()
+                });
+
+                alert('✅ Account created successfully!');
+            } catch (error) {
+                alert('❌ Account creation failed: ' + error.message);
+            }
+        }
+
+        async function logoutAccount() {
+            try {
+                const { signOut } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                await signOut(window.firebaseServices.auth);
+                showPage('buyProduct');
+                alert('✅ Logged out successfully');
+            } catch (error) {
+                alert('❌ Logout failed: ' + error.message);
+            }
+        }
+
+        async function sendPasswordReset() {
+            const email = document.getElementById('resetEmail').value;
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+
+            try {
+                const { sendPasswordResetEmail } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                await sendPasswordResetEmail(window.firebaseServices.auth, email);
+                alert('✅ Password reset email sent! Check your inbox.');
+                closeModal('resetPasswordModal');
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        async function submitProduct(e) {
+            e.preventDefault();
 
             if (!window.currentUser) {
-                alert('Please login first');
+                alert('⚠️ Please login first to sell products');
+                showPage('myAccount');
                 return;
             }
 
-            const fileInput = document.getElementById('productImage');
-            const file = fileInput.files[0];
+            const formData = new FormData(e.target);
+            const file = formData.get('productImage');
 
             if (!file) {
-                alert('Please select an image');
+                alert('Please select a product image');
                 return;
             }
 
-            // Check file size (5MB max)
             if (file.size > 5 * 1024 * 1024) {
                 alert('Image size must be less than 5MB');
                 return;
             }
 
-            // Show loading
-            const uploadBtn = e.target.querySelector('button[type="submit"]');
-            const originalText = uploadBtn.textContent;
-            uploadBtn.textContent = 'Uploading Image...';
-            uploadBtn.disabled = true;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.textContent = 'Uploading...⏳';
+            submitBtn.disabled = true;
 
             try {
-                // Upload image to Firebase Storage
+                const { ref, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js');
+                const { collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
                 const storageRef = ref(
-                    window.storage, 
+                    window.firebaseServices.storage,
                     `products/${window.currentUser.uid}/${Date.now()}_${file.name}`
                 );
                 
                 const snapshot = await uploadBytes(storageRef, file);
                 const imageURL = await getDownloadURL(snapshot.ref);
 
-                uploadBtn.textContent = 'Saving to Database...';
+                submitBtn.textContent = 'Saving...💾';
 
-                // Save to Firestore
-                const { collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-                
-                await addDoc(collection(window.db, 'uploads'), {
+                await addDoc(collection(window.firebaseServices.db, 'products'), {
                     userId: window.currentUser.uid,
                     userEmail: window.currentUser.email,
-                    itemName: document.getElementById('itemName').value,
-                    category: document.getElementById('itemCategory').value,
-                    description: document.getElementById('itemDescription').value,
-                    url: document.getElementById('itemUrl').value,
-                    price: parseFloat(document.getElementById('itemPrice').value),
+                    name: formData.get('productName'),
+                    category: formData.get('category'),
+                    description: formData.get('description'),
+                    price: parseFloat(formData.get('price')),
                     imageURL: imageURL,
-                    verificationCode: code,
-                    stage: 1,
-                    status: 'submitted',
+                    productUrl: formData.get('productUrl') || '',
+                    stock: parseInt(formData.get('stock')),
+                    shipping: formData.get('shipping'),
+                    tags: formData.get('tags') || '',
+                    contactEmail: formData.get('contactEmail'),
+                    contactPhone: formData.get('contactPhone') || '',
+                    status: 'pending',
+                    views: 0,
+                    sales: 0,
+                    rating: 5.0,
                     createdAt: serverTimestamp()
                 });
 
-                alert('✅ Item uploaded successfully!\n\nAdmin will review within 24-48 hours.\nYou will receive email notifications at each stage.');
-                
-                closeModal('uploadModal');
-                document.getElementById('uploadForm').reset();
-                updateProgressTracker(2);
-
+                alert('✅ Product submitted successfully!\n\n📧 Admin will review within 24-48 hours.\n💌 You will receive email notifications at each stage.');
+                e.target.reset();
+                showPage('myAccount');
             } catch (error) {
-                console.error('Upload error:', error);
-                alert('Upload failed: ' + error.message);
+                console.error('Submit error:', error);
+                alert('❌ Submission failed: ' + error.message);
             } finally {
-                uploadBtn.textContent = originalText;
-                uploadBtn.disabled = false;
+                submitBtn.textContent = 'Submit for Verification ✅';
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function registerMarketeer(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            try {
+                const { createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                const userCredential = await createUserWithEmailAndPassword(
+                    window.firebaseServices.auth,
+                    formData.get('email'),
+                    formData.get('password')
+                );
+                
+                await setDoc(doc(window.firebaseServices.db, 'users', userCredential.user.uid), {
+                    email: formData.get('email'),
+                    fullName: formData.get('fullName'),
+                    phone: formData.get('phone') || '',
+                    role: 'marketeer',
+                    points: 0,
+                    sales: 0,
+                    referrals: 0,
+                    level1Earnings: 0,
+                    level2Earnings: 0,
+                    level3Earnings: 0,
+                    level4Earnings: 0,
+                    level5Earnings: 0,
+                    kabiruSynced: true,
+                    createdAt: new Date().toISOString()
+                });
+
+                alert('✅ Marketeer registration successful!\n\n🎯 Your referral system is now active.\n⛏️ Earnings sync with Kabiru Mining App!\n\nStart generating referral links and earning!');
+                document.getElementById('marketeerLoginView').style.display = 'none';
+                document.getElementById('marketeerDashboard').style.display = 'block';
+            } catch (error) {
+                alert('❌ Registration failed: ' + error.message);
             }
         }
 
@@ -1270,54 +1453,63 @@ const app = initializeApp(firebaseConfig);
             });
         }
 
-        function generateReferralLink(itemId) {
+        function showAdminPortal() {
+            showModal('adminAccessModal');
+        }
+
+        function verifyAdminAccess() {
+            const code = document.getElementById('adminCode').value;
+            
+            // Admin codes (you can change these)
+            const validCodes = ['ADMIN2025', 'TAUADMIN', 'MAGERO2025'];
+            
+            if (validCodes.includes(code)) {
+                closeModal('adminAccessModal');
+                // Open admin panel in new window
+                window.open('tau-admin-panel.html', '_blank');
+            } else {
+                alert('❌ Invalid access code. Please contact the administrator.');
+            }
+        }
+
+        async function generateQuickReferral(productId) {
             if (!window.currentUser) {
-                alert('Please login to generate referral links!');
-                showModal('loginModal');
+                alert('⚠️ Please login to generate referral links!');
+                showPage('myAccount');
                 return;
             }
 
             const userId = window.currentUser.uid;
-            const referralId = `${userId}_${itemId}_${Date.now()}`;
-            const referralLink = `https://tauafricamarket.com/ref/${referralId}`;
+            const referralId = `${userId}_${productId}_${Date.now()}`;
+            const referralLink = `https://tauglobalmarketplace.com/ref/${referralId}`;
 
-            const message = `🎉 Your Multi-Level Referral Link Generated!
+            const message = `🎉 Your 5-Level Referral Link Generated!
 
 ${referralLink}
 
-💰 EARNINGS STRUCTURE:
+💰 EARNINGS PER SALE:
 ━━━━━━━━━━━━━━━━━━━━
-Level 1: 50 iKb (Direct referrals)
-Level 2: 35 iKb (Their referrals)
-Level 3: 15 iKb (3rd generation)
-Level 4: 10 iKb (4th generation)
-Level 5: 5 iKb (5th generation)
+🥇 Level 1: 50 iKb (Your direct referrals)
+🥈 Level 2: 35 iKb (Their referrals)
+🥉 Level 3: 15 iKb (3rd generation)
+🏅 Level 4: 10 iKb (4th generation)
+⭐ Level 5: 5 iKb (5th generation)
 
-Plus 5% platform commission on all sales!
+⛏️ All earnings sync automatically to Kabiru Mining App!
 
-⛏️ All earnings sync automatically to Kabiru Mining App for currency mining.
+📱 Share on: Facebook, TikTok, WhatsApp, Instagram, Twitter, and more!
 
-📱 Works on ALL platforms: Facebook, TikTok, WhatsApp, Instagram, Twitter, and external affiliate networks!
+Start sharing and watch your earnings multiply! 🚀`;
 
-Start sharing and watch your earnings multiply!`;
-
-            // Copy to clipboard
-            navigator.clipboard.writeText(referralLink).then(() => {
+            try {
+                await navigator.clipboard.writeText(referralLink);
                 alert(message);
 
-                // Track referral link creation
-                trackReferralGeneration(userId, itemId, referralId);
-            }).catch(() => {
-                alert('Referral link: ' + referralLink + '\n\nCopy this link manually.');
-            });
-        }
-
-        async function trackReferralGeneration(userId, itemId, referralId) {
-            try {
+                // Track referral
                 const { collection, addDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-                await addDoc(collection(window.db, 'referrals'), {
+                await addDoc(collection(window.firebaseServices.db, 'referrals'), {
                     userId: userId,
-                    itemId: itemId,
+                    productId: productId,
                     referralId: referralId,
                     level1Earnings: 0,
                     level2Earnings: 0,
@@ -1331,60 +1523,237 @@ Start sharing and watch your earnings multiply!`;
                     createdAt: new Date().toISOString()
                 });
             } catch (error) {
-                console.error('Tracking error:', error);
+                alert('Referral link: ' + referralLink + '\n\nCopy this link manually.');
             }
+        }
+
+        function openReferralGenerator() {
+            showModal('referralGeneratorModal');
+            loadProductsForReferral();
+        }
+
+        async function loadProductsForReferral() {
+            const select = document.getElementById('productSelect');
+            select.innerHTML = '<option value="">Loading...</option>';
+
+            try {
+                const { collection, getDocs, query, where } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                const q = query(collection(window.firebaseServices.db, 'products'), where('status', '==', 'approved'));
+                const snapshot = await getDocs(q);
+
+                select.innerHTML = '<option value="">-- Select a Product --</option>';
+                snapshot.forEach(doc => {
+                    const product = doc.data();
+                    const option = document.createElement('option');
+                    option.value = doc.id;
+                    option.textContent = `${product.name} - $${product.price}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                select.innerHTML = '<option value="">Error loading products</option>';
+            }
+        }
+
+        async function generateReferralLink() {
+            const productId = document.getElementById('productSelect').value;
+            if (!productId) {
+                alert('Please select a product');
+                return;
+            }
+
+            if (!window.currentUser) {
+                alert('Please login first');
+                return;
+            }
+
+            const userId = window.currentUser.uid;
+            const referralId = `${userId}_${productId}_${Date.now()}`;
+            const referralLink = `https://tauglobalmarketplace.com/ref/${referralId}`;
+
+            document.getElementById('generatedLink').value = referralLink;
+            document.getElementById('generatedLinkDisplay').style.display = 'block';
+
+            // Track referral
+            try {
+                const { collection, addDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                await addDoc(collection(window.firebaseServices.db, 'referrals'), {
+                    userId: userId,
+                    productId: productId,
+                    referralId: referralId,
+                    level1Earnings: 0,
+                    level2Earnings: 0,
+                    level3Earnings: 0,
+                    level4Earnings: 0,
+                    level5Earnings: 0,
+                    totalEarnings: 0,
+                    clicks: 0,
+                    conversions: 0,
+                    kabiruSynced: true,
+                    createdAt: new Date().toISOString()
+                });
+            } catch (error) {
+                console.error('Error tracking referral:', error);
+            }
+        }
+
+        function copyReferralLink() {
+            const linkInput = document.getElementById('generatedLink');
+            linkInput.select();
+            navigator.clipboard.writeText(linkInput.value).then(() => {
+                alert('✅ Referral link copied to clipboard!\n\nShare it on social media to start earning!');
+            });
         }
 
         function viewProduct(productId) {
-            alert('Product details page - Coming soon!\n\nThis will show:\n• Full product information\n• Reviews & ratings\n• Purchase options\n• Seller information\n• AI-generated marketing content');
+            alert('🔍 Product Details Page - Coming Soon!\n\nThis will show:\n• Full product information\n• Image gallery\n• Customer reviews & ratings\n• Purchase options\n• Seller information\n• AI-generated marketing content\n• Related products');
         }
 
-        function shareToSocial(platform) {
-            const url = 'https://tauafricamarket.com';
-            const text = 'Check out Tau Africa Market Search - AI-Powered Global Marketplace with 5-Level Referral System!';
-            
-            const urls = {
-                facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-                twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
-                whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`,
-                tiktok: `https://www.tiktok.com/upload`,
-                instagram: `https://www.instagram.com`
-            };
+        async function transferToKabiru() {
+            if (!window.currentUser) return;
 
-            if (urls[platform]) {
-                window.open(urls[platform], '_blank');
+            try {
+                const { doc, getDoc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                const userDoc = await getDoc(doc(window.firebaseServices.db, 'users', window.currentUser.uid));
+                const userData = userDoc.data();
+
+                if ((userData.points || 0) < 1000) {
+                    alert('⚠️ You need at least 1000 points to transfer to Kabiru Mining App.');
+                    return;
+                }
+
+                const confirmTransfer = confirm(`💎 Transfer ${userData.points} iKb points to Kabiru Mining?\n\nThese points will be converted to mining credits in your Kabiru account.`);
+                
+                if (confirmTransfer) {
+                    // Simulate transfer (integrate with Kabiru API in production)
+                    await updateDoc(doc(window.firebaseServices.db, 'users', window.currentUser.uid), {
+                        points: 0,
+                        lastKabiruTransfer: new Date().toISOString(),
+                        totalKabiruTransferred: (userData.totalKabiruTransferred || 0) + userData.points
+                    });
+
+                    alert('✅ Transfer Successful!\n\n' + userData.points + ' iKb points transferred to Kabiru Mining App.\n\nCheck your Kabiru account to start mining!');
+                    loadUserData();
+                }
+            } catch (error) {
+                alert('❌ Transfer failed: ' + error.message);
             }
         }
 
-        function contactAdmin() {
-            alert('📧 Contact Admin for Verification Code\n\nEmail: admin@tauafricamarket.com\nWhatsApp: +XXX-XXX-XXXX\n\nProvide your registration details to receive your verification code within 24-48 hours.');
+        function toggleChat() {
+            const chatWidget = document.getElementById('chatWidget');
+            chatWidget.classList.toggle('active');
         }
 
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message user';
+            userMsg.innerHTML = `<p>${message}</p>`;
+            messagesContainer.appendChild(userMsg);
+
+            input.value = '';
+
+            // Simulate admin response
+            setTimeout(() => {
+                const adminMsg = document.createElement('div');
+                adminMsg.className = 'chat-message admin';
+                adminMsg.innerHTML = `<p>Thank you for your message. Our support team will respond shortly. For urgent matters, please email support@tauglobalmarketplace.com</p>`;
+                messagesContainer.appendChild(adminMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 1000);
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Load new products
+        async function loadNewProducts() {
+            const grid = document.getElementById('newProductsGrid');
+            grid.innerHTML = '<div class="loading">Loading new products</div>';
+
+            try {
+                const { collection, getDocs, query, orderBy, limit } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                const q = query(
+                    collection(window.firebaseServices.db, 'products'),
+                    orderBy('createdAt', 'desc'),
+                    limit(12)
+                );
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) {
+                    grid.innerHTML = '<div class="empty-state"><h3>No new products yet</h3><p>Be the first to list a product!</p></div>';
+                } else {
+                    grid.innerHTML = '';
+                    snapshot.forEach(doc => {
+                        const product = doc.data();
+                        const statusBadge = product.status === 'pending' ? 
+                            '<div class="badge" style="background: #FFA500;">⏳ Pending Review</div>' :
+                            product.status === 'approved' ?
+                            '<div class="badge" style="background: #11998e;">✅ Approved</div>' :
+                            '<div class="badge" style="background: #ff6b6b;">❌ Rejected</div>';
+                        
+                        const card = createProductCard(product, doc.id);
+                        grid.innerHTML += card.replace('<div class="badge">🤖 AI Marketing</div>', statusBadge);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading new products:', error);
+                grid.innerHTML = '<div class="empty-state"><h3>Error loading products</h3></div>';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🌍 Tau Global Marketplace - Initialized');
+            console.log('🤖 AI Marketing Engine - Active');
+            console.log('💰 5-Level Referral System - Ready');
+            console.log('⛏️ Kabiru Mining Integration - Connected');
+        });
+
+        // Expose functions globally
+        window.showPage = showPage;
         window.showModal = showModal;
         window.closeModal = closeModal;
-        window.loginUser = loginUser;
-        window.registerSeller = registerSeller;
+        window.togglePassword = togglePassword;
+        window.loginAccount = loginAccount;
+        window.createAccount = createAccount;
+        window.logoutAccount = logoutAccount;
+        window.sendPasswordReset = sendPasswordReset;
+        window.submitProduct = submitProduct;
         window.registerMarketeer = registerMarketeer;
-        window.uploadItem = uploadItem;
         window.performSearch = performSearch;
         window.filterCategory = filterCategory;
+        window.showAdminPortal = showAdminPortal;
+        window.verifyAdminAccess = verifyAdminAccess;
+        window.generateQuickReferral = generateQuickReferral;
+        window.openReferralGenerator = openReferralGenerator;
         window.generateReferralLink = generateReferralLink;
+        window.copyReferralLink = copyReferralLink;
         window.viewProduct = viewProduct;
-        window.shareToSocial = shareToSocial;
-        window.contactAdmin = contactAdmin;
+        window.transferToKabiru = transferToKabiru;
+        window.toggleChat = toggleChat;
+        window.sendChatMessage = sendChatMessage;
+        window.loadNewProducts = loadNewProducts;
 
-        // Search on Enter
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') performSearch();
+        // Load new products when section is shown
+        const newProductsObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.target.id === 'newProducts' && mutation.target.classList.contains('active')) {
+                    loadNewProducts();
+                }
+            });
         });
 
-        // Initialize marketplace on load
-        window.addEventListener('load', () => {
-            console.log('Tau Africa Market Search - Initialized');
-            console.log('AI Marketing Engine - Active');
-            console.log('5-Level Referral System - Ready');
-            console.log('Kabiru Mining Integration - Connected');
-        });
+        const newProductsSection = document.getElementById('newProducts');
+        if (newProductsSection) {
+            newProductsObserver.observe(newProductsSection, { attributes: true, attributeFilter: ['class'] });
+        }
     </script>
 </body>
 </html>
