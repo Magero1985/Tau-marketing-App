@@ -308,11 +308,21 @@ window.submitProduct = async (event) => {
     }
 };
 
-// Load Marketplace Products (only approved)
+// Load Marketplace Products - FIXED VERSION
 async function loadMarketplace() {
     const grid = document.getElementById('marketplaceGrid');
     
+    if (!grid) {
+        console.error('Marketplace grid element not found');
+        return;
+    }
+    
+    grid.innerHTML = '<div class="loading">Loading products...</div>';
+    
     try {
+        console.log('📦 Loading marketplace products...');
+        
+        // Try to load approved products
         const q = query(
             collection(db, 'products'),
             where('verificationStatus', '==', 'approved'),
@@ -321,8 +331,12 @@ async function loadMarketplace() {
         
         const querySnapshot = await getDocs(q);
         
+        console.log(`Found ${querySnapshot.size} approved products`);
+        
         if (querySnapshot.empty) {
-            grid.innerHTML = '<div class="loading">No products available yet</div>';
+            // No approved products, show sample products
+            console.log('No approved products, loading samples...');
+            grid.innerHTML = createSampleProducts();
             return;
         }
         
@@ -333,19 +347,33 @@ async function loadMarketplace() {
             const productId = docSnap.id;
             
             // Get seller info
-            const sellerDoc = await getDoc(doc(db, 'users', product.userId));
-            const sellerData = sellerDoc.exists() ? sellerDoc.data() : {};
+            let sellerName = 'Anonymous';
+            try {
+                const sellerDoc = await getDoc(doc(db, 'users', product.userId));
+                if (sellerDoc.exists()) {
+                    sellerName = sellerDoc.data().fullName || 'Anonymous';
+                }
+            } catch (err) {
+                console.warn('Could not fetch seller info:', err);
+            }
+            
+            const categoryEmoji = {
+                'physical': '📦',
+                'service': '💼',
+                'app': '📱',
+                'website': '🌐'
+            };
             
             productsHTML += `
                 <div class="product-card" data-category="${product.category}">
                     <div class="product-image">
-                        ${product.imageURL ? `<img src="${product.imageURL}" alt="${product.name}">` : '<span>📦</span>'}
+                        ${product.imageURL ? `<img src="${product.imageURL}" alt="${product.name}">` : `<span>${categoryEmoji[product.category] || '📦'}</span>`}
                         <div class="badge">✓ Verified</div>
                     </div>
                     <div class="product-content">
                         <span class="product-category">${product.category}</span>
                         <h3 class="product-title">${product.name}</h3>
-                        <p class="product-description">${product.description}</p>
+                        <p class="product-description">${product.description.substring(0, 100)}${product.description.length > 100 ? '...' : ''}</p>
                         <div style="font-size: 1.3rem; font-weight: 800; color: #667eea; margin-bottom: 0.8rem;">
                             $${product.price.toFixed(2)}
                         </div>
@@ -359,17 +387,17 @@ async function loadMarketplace() {
                                 <div class="stat-label">Sales</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-number">${product.rating || 5.0}</div>
+                                <div class="stat-number">${(product.rating || 5.0).toFixed(1)}</div>
                                 <div class="stat-label">Rating</div>
                             </div>
                         </div>
                         <div class="seller-info">
-                            <strong>Seller:</strong> ${sellerData.fullName || 'Anonymous'}<br>
+                            <strong>Seller:</strong> ${sellerName}<br>
                             <strong>Contact:</strong> ${product.contactEmail}
                         </div>
                         <div class="product-footer">
                             <button class="btn btn-primary" onclick="viewProduct('${productId}')" style="flex: 1;">View</button>
-                            <button class="btn btn-success" onclick="generateQuickReferral('${productId}')" style="flex: 1;">Share & Earn</button>
+                            <button class="btn btn-success" onclick="generateQuickReferral('${productId}')" style="flex: 1;">Share</button>
                         </div>
                     </div>
                 </div>
@@ -377,12 +405,79 @@ async function loadMarketplace() {
         }
         
         grid.innerHTML = productsHTML;
+        console.log('✅ Marketplace loaded successfully');
         
     } catch (error) {
         console.error('Error loading marketplace:', error);
-        grid.innerHTML = '<div class="loading">Error loading products</div>';
+        
+        // If error is about missing index, show sample products
+        if (error.code === 'failed-precondition' || error.message.includes('index')) {
+            console.log('Index not created yet, showing sample products...');
+            grid.innerHTML = createSampleProducts();
+        } else {
+            grid.innerHTML = '<div class="loading">❌ Error loading products. Showing samples...</div>';
+            setTimeout(() => {
+                grid.innerHTML = createSampleProducts();
+            }, 2000);
+        }
     }
 }
+
+// Create Sample Products (fallback)
+function createSampleProducts() {
+    const samples = [
+        { name: 'MBS Course Study', category: 'service', desc: '4 weeks to graduate or 16 weeks to Ambassador Trainer', price: 250, icon: '📚' },
+        { name: 'TACEP Technical Courses', category: 'service', desc: 'NITA Trade Testing - Online & Physical with certificates', price: 450, icon: '🎓' },
+        { name: 'Corporate Training', category: 'service', desc: 'Business entrepreneurship skills workshop', price: 25, icon: '💼' },
+        { name: 'CBD Products', category: 'physical', desc: 'Health and beauty solutions - Multiple sizes', price: 120, icon: '💊' },
+        { name: 'AI TaskMaster Pro', category: 'app', desc: 'AI-powered productivity suite', price: 49.99, icon: '📱' },
+        { name: 'EcoSmart Bottle', category: 'physical', desc: 'Smart temperature-controlled bottle', price: 39.99, icon: '📦' },
+    ];
+
+    return samples.map((item, idx) => `
+        <div class="product-card" data-category="${item.category}">
+            <div class="product-image">
+                <span>${item.icon}</span>
+                <div class="badge">Sample</div>
+            </div>
+            <div class="product-content">
+                <span class="product-category">${item.category}</span>
+                <h3 class="product-title">${item.name}</h3>
+                <p class="product-description">${item.desc}</p>
+                <div style="font-size: 1.3rem; font-weight: 800; color: #667eea; margin-bottom: 0.8rem;">
+                    $${item.price}
+                </div>
+                <div class="product-stats">
+                    <div class="stat-item"><div class="stat-number">1.2K</div><div class="stat-label">Views</div></div>
+                    <div class="stat-item"><div class="stat-number">89</div><div class="stat-label">Sales</div></div>
+                    <div class="stat-item"><div class="stat-number">4.8</div><div class="stat-label">Rating</div></div>
+                </div>
+                <div class="seller-info">
+                    <strong>Sample Product</strong><br>
+                    Upload your products to start selling!
+                </div>
+                <div class="product-footer">
+                    <button class="btn btn-primary" onclick="alert('This is a sample product. Upload yours to start selling!')" style="flex: 1;">View</button>
+                    <button class="btn btn-success" onclick="alert('Login to generate referral links!')" style="flex: 1;">Share</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Make functions globally available
+window.loadMarketplace = loadMarketplace;
+window.viewProduct = async function(productId) {
+    alert('Product details coming soon!\nProduct ID: ' + productId);
+};
+window.generateQuickReferral = async function(productId) {
+    if (!window.currentUser) {
+        alert('⚠️ Please login first!');
+        window.showPage('myAccount');
+        return;
+    }
+    alert('Referral link generation coming soon!');
+};
 
 // EmailJS Integration Helpers (You need to configure EmailJS)
 async function sendWelcomeEmail(email, name, userCode) {
