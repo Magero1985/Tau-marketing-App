@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tau Global Marketplace - One Stop Shopping & Advertising Platform">
+    <meta name="theme-color" content="#667eea">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <title>Tau Global Marketplace</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -39,6 +43,7 @@
         .marketplace-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
         .product-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
         .product-image { width: 100%; height: 180px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem; position: relative; }
+        .product-image img { width: 100%; height: 100%; object-fit: cover; }
         .badge { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.95); padding: 4px 12px; border-radius: 15px; font-size: 0.7rem; font-weight: 700; color: #667eea; }
         .product-content { padding: 1.2rem; }
         .product-category { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4px 10px; border-radius: 10px; font-size: 0.7rem; margin-bottom: 0.5rem; }
@@ -49,6 +54,8 @@
         .stat-number { font-size: 1rem; font-weight: 800; color: #667eea; }
         .stat-label { font-size: 0.65rem; color: #a0aec0; text-transform: uppercase; }
         .product-footer { display: flex; gap: 8px; }
+        .seller-info { background: #f7fafc; padding: 0.8rem; border-radius: 8px; margin-top: 0.8rem; font-size: 0.8rem; }
+        .seller-info strong { color: #667eea; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto; }
         .modal.active { display: flex; align-items: center; justify-content: center; }
         .modal-content { background: white; width: 90%; max-width: 600px; margin: 2rem auto; padding: 2rem; border-radius: 15px; position: relative; max-height: 90vh; overflow-y: auto; }
@@ -84,9 +91,25 @@
         .profile-section { background: white; padding: 1.5rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
         .profile-photo { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white; margin: 0 auto 1rem; }
         .profile-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .verification-badge { background: #38ef7d; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; display: inline-block; margin-left: 8px; }
+        .verification-badge.pending { background: #FFA500; }
+        .verification-badge.rejected { background: #ee5a6f; }
+        .user-code-display { background: #f7fafc; padding: 1rem; border-radius: 10px; margin: 1rem 0; text-align: center; }
+        .user-code { font-family: monospace; font-size: 1.3rem; font-weight: 900; color: #667eea; letter-spacing: 2px; }
+        .install-prompt { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem; border-radius: 10px; margin-bottom: 1rem; display: none; align-items: center; justify-content: space-between; }
+        .install-prompt.show { display: flex; }
+        .payment-methods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem; }
+        .payment-card { background: #f7fafc; padding: 1rem; border-radius: 10px; border: 2px solid #e2e8f0; cursor: pointer; text-align: center; transition: all 0.3s; }
+        .payment-card:hover { border-color: #667eea; transform: translateY(-2px); }
+        .payment-card.selected { background: #667eea; color: white; border-color: #667eea; }
     </style>
 </head>
 <body>
+    <div class="install-prompt" id="installPrompt">
+        <span>📱 Install Tau Marketplace App</span>
+        <button class="btn btn-secondary" onclick="installPWA()" style="background: white; color: #667eea;">Install</button>
+    </div>
+
     <div class="header">
         <div class="header-content">
             <div class="logo-container">
@@ -147,7 +170,7 @@
                         </div>
                     </div>
                     <button class="btn btn-primary" style="width: 100%; margin-bottom: 0.5rem;" onclick="loginAccount()">Login</button>
-                    <button class="btn btn-success" style="width: 100%; margin-bottom: 0.5rem;" onclick="createAccount()">Create Account</button>
+                    <button class="btn btn-success" style="width: 100%; margin-bottom: 0.5rem;" onclick="showModal('registerModal')">Create Account</button>
                     <button class="btn" style="width: 100%; background: #f7fafc; color: #2d3748;" onclick="showModal('resetPasswordModal')">Reset Password</button>
                 </div>
             </div>
@@ -156,9 +179,16 @@
                     <div class="profile-photo" id="profilePhoto">👤</div>
                     <label for="uploadPhoto" class="btn btn-secondary" style="display: block; text-align: center; cursor: pointer;">Change Photo</label>
                     <input type="file" id="uploadPhoto" accept="image/*" style="display: none;" onchange="uploadProfilePhoto(event)">
+                    
+                    <div class="user-code-display">
+                        <p style="font-size: 0.8rem; color: #718096; margin-bottom: 0.5rem;">Your Unique Code</p>
+                        <div class="user-code" id="userCode">Loading...</div>
+                        <p style="font-size: 0.75rem; color: #a0aec0; margin-top: 0.5rem;">Use this code across all Tau ecosystem apps</p>
+                    </div>
+                    
                     <p style="margin-top: 1rem; font-size: 0.85rem;"><strong>Name:</strong> <span id="memberName">Loading...</span></p>
                     <p style="font-size: 0.85rem;"><strong>Email:</strong> <span id="memberEmail">Loading...</span></p>
-                    <p style="font-size: 0.85rem;"><strong>ID:</strong> <span id="memberId" style="font-family: monospace;">...</span></p>
+                    <p style="font-size: 0.85rem;"><strong>Status:</strong> <span id="verificationStatus" class="verification-badge pending">Pending</span></p>
                 </div>
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -180,6 +210,57 @@
                 </div>
                 <button class="btn btn-success" style="width: 100%; margin-bottom: 0.5rem;" onclick="transferToKabiru()" id="transferBtn" disabled>Transfer to Kabiru (1000+)</button>
                 <button class="btn btn-secondary" style="width: 100%;" onclick="logoutAccount()">Logout</button>
+            </div>
+        </div>
+
+        <!-- Sell Product -->
+        <div id="sellProduct" class="page-section">
+            <h2 style="margin-bottom: 1.5rem;">📦 Sell Your Product</h2>
+            <div class="profile-section">
+                <form id="sellProductForm" onsubmit="submitProduct(event)">
+                    <div class="form-group">
+                        <label>Product Name *</label>
+                        <input type="text" name="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select name="category" required>
+                            <option value="">Select...</option>
+                            <option value="physical">Physical Product</option>
+                            <option value="service">Service</option>
+                            <option value="app">App</option>
+                            <option value="website">Website</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <textarea name="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Price (USD) *</label>
+                        <input type="number" name="price" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Image *</label>
+                        <input type="file" name="productImage" accept="image/*" required>
+                        <div id="uploadProgress">
+                            <div style="background: #e2e8f0; border-radius: 8px; height: 25px; overflow: hidden;">
+                                <div id="uploadProgressBar"></div>
+                            </div>
+                            <p id="uploadProgressText" style="text-align: center; margin-top: 0.5rem; color: #667eea; font-size: 0.85rem;"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Email *</label>
+                        <input type="email" name="contactEmail" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Submit for Verification</button>
+                    <p style="margin-top: 1rem; font-size: 0.8rem; color: #718096;">
+                        ℹ️ Your product will go through a 2-step verification process:<br>
+                        1️⃣ Initial review (24-48 hours)<br>
+                        2️⃣ Final approval before going live
+                    </p>
+                </form>
             </div>
         </div>
 
@@ -267,7 +348,6 @@
             </div>
         </div>
     </div>
-
     <!-- Modals -->
     <div id="resetPasswordModal" class="modal">
         <div class="modal-content">
@@ -293,22 +373,38 @@
         </div>
     </div>
 
-    <!-- Chat -->
-    <button class="chat-toggle" onclick="toggleChat()">💬</button>
-    <div class="chat-widget" id="chatWidget">
-        <div class="chat-header">
-            <span>Support</span>
-            <button onclick="toggleChat()" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.3rem;">×</button>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-            <div class="chat-message admin"><p>👋 How can we help?</p></div>
-        </div>
-        <div class="chat-input-area">
-            <input type="text" id="chatInput" placeholder="Type message..." onkeypress="if(event.key==='Enter') sendChatMessage()">
-            <button class="btn btn-primary" onclick="sendChatMessage()">Send</button>
+    <!-- Registration Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('registerModal')">&times;</span>
+            <h2 style="margin-bottom: 1.5rem;">Create Account</h2>
+            <form id="registerForm" onsubmit="createAccount(event)">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="regFullName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="regEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Password *</label>
+                    <div class="password-toggle">
+                        <input type="password" id="regPassword" required minlength="6">
+                        <button onclick="togglePassword('regPassword')" type="button">👁️</button>
+                    </div>
+                    <small style="color: #718096;">Minimum 6 characters</small>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password *</label>
+                    <input type="password" id="regConfirmPassword" required>
+                </div>
+                <button type="submit" class="btn btn-success" style="width: 100%;">Create Account</button>
+            </form>
         </div>
     </div>
 
+    
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
@@ -798,5 +894,23 @@
         window.toggleChat = toggleChat;
         window.sendChatMessage = sendChatMessage;
     </script>
+
+    <!-- Chat Widget -->
+    <button class="chat-toggle" onclick="toggleChat()">💬</button>
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header">
+            <span>Support</span>
+            <button onclick="toggleChat()" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.3rem;">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message admin"><p>👋 How can we help?</p></div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Type message..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+            <button class="btn btn-primary" onclick="sendChatMessage()">Send</button>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
 </body>
 </html>
