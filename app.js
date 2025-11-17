@@ -1,3 +1,37 @@
+// app.js - FIXED VERSION
+console.log('📱 Loading Tau Marketplace...');
+
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc, orderBy, serverTimestamp, getDoc, setDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+
+// Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyAaUOObFv8KU6KSYC7Uj9c2ELPjbdu-JX0",
+    authDomain: "tau-marketplace.firebaseapp.com",
+    projectId: "tau-marketplace",
+    storageBucket: "tau-marketplace.firebasestorage.app",
+    messagingSenderId: "692166197354",
+    appId: "1:692166197354:web:b002dd1283f4b247a68a13"
+};
+
+// Initialize Firebase
+console.log('🔥 Initializing Firebase...');
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+// Make globally available IMMEDIATELY
+window.firebaseServices = { auth, db, storage };
+window.currentUser = null;
+
+// Dispatch event to notify that Firebase is ready
+window.dispatchEvent(new Event('firebaseInitialized'));
+console.log('✅ Firebase initialized successfully');
+
+// ... rest of your app.js code continues here
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc, orderBy, serverTimestamp, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
