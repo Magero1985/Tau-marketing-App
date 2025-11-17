@@ -412,380 +412,307 @@
     <script type="module" src="app.js"></script>
 
     <script>
-        function showPage(pageId) {
-            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-        }
+    // Wait for Firebase to initialize
+    let firebaseReady = false;
+    
+    window.addEventListener('firebaseInitialized', () => {
+        firebaseReady = true;
+        console.log('✅ Firebase initialized and ready');
+    });
 
-        function showModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
+    function showPage(pageId) {
+        document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+        const page = document.getElementById(pageId);
+        if (page) {
+            page.classList.add('active');
         }
+    }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
+    function showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('active');
         }
+    }
 
-        function togglePassword(inputId) {
-            const input = document.getElementById(inputId);
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('active');
+        }
+    }
+
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        if (input) {
             input.type = input.type === 'password' ? 'text' : 'password';
         }
+    }
 
-        async function loginAccount() {
-            const email = document.getElementById('accountEmail').value;
-            const password = document.getElementById('accountPassword').value;
-            if (!email || !password) return alert('Please enter email and password');
-
-            try {
-                const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-                await signInWithEmailAndPassword(window.firebaseServices.auth, email, password);
-                alert('✅ Login successful!');
-            } catch (error) {
-                alert('❌ Login failed: ' + error.message);
-            }
+    async function loginAccount() {
+        const email = document.getElementById('accountEmail')?.value;
+        const password = document.getElementById('accountPassword')?.value;
+        
+        if (!email || !password) {
+            return alert('⚠️ Please enter email and password');
         }
 
-        async function createAccount() {
-            const email = document.getElementById('accountEmail').value;
-            const password = document.getElementById('accountPassword').value;
-            if (!email || !password) return alert('Please enter email and password');
-            if (password.length < 6) return alert('Password must be at least 6 characters');
-
-            try {
-                const { createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-                const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-                
-                const userCredential = await createUserWithEmailAndPassword(window.firebaseServices.auth, email, password);
-                
-                await setDoc(doc(window.firebaseServices.db, 'users', userCredential.user.uid), {
-                    email: email,
-                    points: 0,
-                    sales: 0,
-                    referrals: 0,
-                    products: 0,
-                    createdAt: new Date().toISOString()
-                });
-
-                alert('✅ Account created successfully!');
-            } catch (error) {
-                alert('❌ Account creation failed: ' + error.message);
-            }
+        // Check if Firebase is ready
+        if (!window.firebaseServices || !window.firebaseServices.auth) {
+            console.error('Firebase not initialized yet');
+            return alert('⚠️ Please wait a moment and try again. App is still loading...');
         }
 
-        async function logoutAccount() {
-            try {
-                const { signOut } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-                await signOut(window.firebaseServices.auth);
-                showPage('buyProduct');
-                alert('✅ Logged out successfully');
-            } catch (error) {
-                alert('❌ Logout failed: ' + error.message);
-            }
-        }
-
-        async function sendPasswordReset() {
-            const email = document.getElementById('resetEmail').value;
-            if (!email) return alert('Please enter your email address');
-
-            try {
-                const { sendPasswordResetEmail } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-                await sendPasswordResetEmail(window.firebaseServices.auth, email);
-                alert('✅ Password reset email sent!');
-                closeModal('resetPasswordModal');
-            } catch (error) {
-                alert('❌ Error: ' + error.message);
-            }
-        }
-
-        async function submitProduct(e) {
-            e.preventDefault();
-            if (!window.currentUser) {
-                alert('⚠️ Please login first');
-                showPage('myAccount');
-                return;
-            }
-
-            const formData = new FormData(e.target);
-            const file = formData.get('productImage');
-            if (!file || file.size > 5 * 1024 * 1024) return alert('Please select image under 5MB');
-
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            submitBtn.textContent = 'Uploading...';
-            submitBtn.disabled = true;
-
-            document.getElementById('uploadProgress').style.display = 'block';
-            const progressBar = document.getElementById('uploadProgressBar');
-            const progressText = document.getElementById('uploadProgressText');
-
-            try {
-                const { ref, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js');
-                const { collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-                
-                progressBar.style.width = '20%';
-                progressBar.textContent = '20%';
-                progressText.textContent = 'Uploading image...';
-
-                const storageRef = ref(window.firebaseServices.storage, `products/${window.currentUser.uid}/${Date.now()}_${file.name}`);
-                const snapshot = await uploadBytes(storageRef, file);
-                const imageURL = await getDownloadURL(snapshot.ref);
-
-                progressBar.style.width = '60%';
-                progressBar.textContent = '60%';
-                progressText.textContent = 'Saving details...';
-
-                await addDoc(collection(window.firebaseServices.db, 'products'), {
-                    userId: window.currentUser.uid,
-                    userEmail: window.currentUser.email,
-                    name: formData.get('productName'),
-                    category: formData.get('category'),
-                    description: formData.get('description'),
-                    price: parseFloat(formData.get('price')),
-                    imageURL: imageURL,
-                    contactEmail: formData.get('contactEmail'),
-                    status: 'pending',
-                    views: 0,
-                    sales: 0,
-                    rating: 5.0,
-                    createdAt: serverTimestamp()
-                });
-
-                progressBar.style.width = '100%';
-                progressBar.textContent = '100%';
-                progressText.textContent = 'Complete!';
-
-                setTimeout(() => {
-                    alert('✅ Product Submitted!\n\n🎉 Congratulations! Admin will review within 24-48 hours.\n📧 You will receive notifications.\n🚀 Once approved, your product will be live!');
-                    e.target.reset();
-                    document.getElementById('uploadProgress').style.display = 'none';
-                    progressBar.style.width = '0%';
-                    showPage('myAccount');
-                }, 1000);
-
-            } catch (error) {
-                alert('❌ Submission failed: ' + error.message);
-            } finally {
-                submitBtn.textContent = 'Submit for Verification';
-                submitBtn.disabled = false;
-            }
-        }
-
-        async function registerMarketeer(e) {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-
-            try {
-                const { createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-                const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-                
-                const userCredential = await createUserWithEmailAndPassword(
-                    window.firebaseServices.auth,
-                    formData.get('email'),
-                    formData.get('password')
-                );
-                
-                await setDoc(doc(window.firebaseServices.db, 'users', userCredential.user.uid), {
-                    email: formData.get('email'),
-                    fullName: formData.get('fullName'),
-                    role: 'marketeer',
-                    points: 0,
-                    sales: 0,
-                    referrals: 0,
-                    createdAt: new Date().toISOString()
-                });
-
-                alert('✅ Marketeer registration successful!\n\n🎯 Your referral system is active.\n⛏️ Earnings sync with Kabiru Mining!\n\nStart generating links!');
-            } catch (error) {
-                alert('❌ Registration failed: ' + error.message);
-            }
-        }
-
-        function performSearch() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const cards = document.querySelectorAll('.product-card');
-            let found = 0;
-
-            cards.forEach(card => {
-                const title = card.querySelector('.product-title').textContent.toLowerCase();
-                const desc = card.querySelector('.product-description').textContent.toLowerCase();
-
-                if (title.includes(searchTerm) || desc.includes(searchTerm) || searchTerm === '') {
-                    card.style.display = 'block';
-                    found++;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-
-            if (found === 0) {
-                document.getElementById('marketplaceGrid').innerHTML = '<div class="loading">No results found</div>';
-            }
-        }
-
-        function filterCategory(category) {
-            const cards = document.querySelectorAll('.product-card');
-            const buttons = document.querySelectorAll('.filter-btn');
-
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-
-            cards.forEach(card => {
-                if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        function showAdminPortal() {
-            showModal('adminAccessModal');
-        }
-
-        function verifyAdminAccess() {
-            const code = document.getElementById('adminCode').value;
-            const validCodes = ['ADMIN2025', 'TAUADMIN', 'MAGERO2025'];
-            
-            if (validCodes.includes(code)) {
-                closeModal('adminAccessModal');
-                window.open('tau-admin-panel.html', '_blank');
+        try {
+            const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+            await signInWithEmailAndPassword(window.firebaseServices.auth, email, password);
+            alert('✅ Login successful!');
+            showPage('buyProduct');
+        } catch (error) {
+            console.error('Login error:', error);
+            let errorMessage = 'Login failed: ';
+            if (error.code === 'auth/user-not-found') {
+                errorMessage += 'No account found with this email.';
+            } else if (error.code === 'auth/wrong-password') {
+                errorMessage += 'Incorrect password.';
+            } else if (error.code === 'auth/invalid-email') {
+                errorMessage += 'Invalid email address.';
+            } else if (error.code === 'auth/too-many-requests') {
+                errorMessage += 'Too many failed attempts. Try again later.';
             } else {
-                alert('❌ Invalid access code');
+                errorMessage += error.message;
+            }
+            alert('❌ ' + errorMessage);
+        }
+    }
+
+    async function createAccount(event) {
+        if (event) event.preventDefault();
+        
+        const fullName = document.getElementById('regFullName')?.value;
+        const email = document.getElementById('regEmail')?.value;
+        const password = document.getElementById('regPassword')?.value;
+        const confirmPassword = document.getElementById('regConfirmPassword')?.value;
+        
+        if (!fullName || !email || !password) {
+            return alert('⚠️ Please fill in all fields');
+        }
+        
+        if (password !== confirmPassword) {
+            return alert('❌ Passwords do not match!');
+        }
+        
+        if (password.length < 6) {
+            return alert('❌ Password must be at least 6 characters');
+        }
+
+        if (!window.firebaseServices) {
+            return alert('⚠️ Please wait, app is still loading...');
+        }
+
+        try {
+            const { createUserWithEmailAndPassword, sendEmailVerification } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+            const { doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+            
+            const userCredential = await createUserWithEmailAndPassword(
+                window.firebaseServices.auth, 
+                email, 
+                password
+            );
+            
+            const user = userCredential.user;
+            
+            // Send verification email
+            await sendEmailVerification(user);
+            
+            // Generate unique code
+            const timestamp = Date.now().toString(36).toUpperCase();
+            const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
+            const userCode = `TAU-${timestamp}-${randomStr}`;
+            
+            // Create user document
+            await setDoc(doc(window.firebaseServices.db, 'users', user.uid), {
+                uid: user.uid,
+                email: email,
+                fullName: fullName,
+                userCode: userCode,
+                points: 0,
+                sales: 0,
+                referrals: 0,
+                products: 0,
+                verified: false,
+                emailVerified: false,
+                role: 'user',
+                createdAt: serverTimestamp(),
+                lastLogin: serverTimestamp()
+            });
+            
+            alert(`✅ Account Created!\n\n📧 Verification email sent to:\n${email}\n\n🔑 Your Code:\n${userCode}\n\nPlease verify your email before logging in.`);
+            
+            closeModal('registerModal');
+            document.getElementById('registerForm')?.reset();
+            
+        } catch (error) {
+            console.error('Registration error:', error);
+            let errorMessage = 'Registration failed: ';
+            if (error.code === 'auth/email-already-in-use') {
+                errorMessage += 'This email is already registered.';
+            } else if (error.code === 'auth/invalid-email') {
+                errorMessage += 'Invalid email address.';
+            } else if (error.code === 'auth/weak-password') {
+                errorMessage += 'Password is too weak.';
+            } else {
+                errorMessage += error.message;
+            }
+            alert('❌ ' + errorMessage);
+        }
+    }
+
+    async function logoutAccount() {
+        if (!window.firebaseServices) return;
+        
+        try {
+            const { signOut } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+            await signOut(window.firebaseServices.auth);
+            showPage('buyProduct');
+            alert('✅ Logged out successfully');
+        } catch (error) {
+            console.error('Logout error:', error);
+            alert('❌ Logout failed');
+        }
+    }
+
+    async function sendPasswordReset() {
+        const email = document.getElementById('resetEmail')?.value;
+        
+        if (!email) {
+            return alert('⚠️ Please enter your email address');
+        }
+
+        if (!window.firebaseServices) {
+            return alert('⚠️ Please wait, app is still loading...');
+        }
+
+        try {
+            const { sendPasswordResetEmail } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+            await sendPasswordResetEmail(window.firebaseServices.auth, email);
+            alert('✅ Password reset email sent! Check your inbox.');
+            closeModal('resetPasswordModal');
+            document.getElementById('resetEmail').value = '';
+        } catch (error) {
+            console.error('Password reset error:', error);
+            alert('❌ Error: ' + error.message);
+        }
+    }
+
+    function performSearch() {
+        const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+        const cards = document.querySelectorAll('.product-card');
+        let found = 0;
+
+        cards.forEach(card => {
+            const title = card.querySelector('.product-title')?.textContent?.toLowerCase() || '';
+            const desc = card.querySelector('.product-description')?.textContent?.toLowerCase() || '';
+
+            if (title.includes(searchTerm) || desc.includes(searchTerm) || searchTerm === '') {
+                card.style.display = 'block';
+                found++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (found === 0 && searchTerm !== '') {
+            const grid = document.getElementById('marketplaceGrid');
+            if (grid) {
+                grid.innerHTML = '<div class="loading">No results found for "' + searchTerm + '"</div>';
             }
         }
+    }
 
-        async function generateQuickReferral(productId) {
-            if (!window.currentUser) {
-                alert('⚠️ Please login first!');
-                showPage('myAccount');
-                return;
+    function filterCategory(category) {
+        const cards = document.querySelectorAll('.product-card');
+        const buttons = document.querySelectorAll('.filter-btn');
+
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        cards.forEach(card => {
+            if (category === 'all' || card.dataset.category === category) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
             }
+        });
+    }
 
-            const userId = window.currentUser.uid;
-            const referralId = `${userId.substring(0, 8)}_${productId}_${Date.now()}`;
-            const baseUrl = window.location.origin + window.location.pathname;
-            const referralLink = `${baseUrl}?ref=${referralId}`;
+    function showAdminPortal() {
+        showModal('adminAccessModal');
+    }
 
-            const message = `🎉 Referral Link Generated!\n\n📋 Copy & share:\n${referralLink}\n\n💰 EARNINGS:\n🥇 Level 1: 50 iKb\n🥈 Level 2: 35 iKb\n🥉 Level 3: 15 iKb\n🏅 Level 4: 10 iKb\n⭐ Level 5: 5 iKb\n\n⛏️ Auto-syncs to Kabiru Mining!\n\nStart sharing! 🚀`;
-
-            try {
-                await navigator.clipboard.writeText(referralLink);
-                alert(message);
-
-                const { collection, addDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-                await addDoc(collection(window.firebaseServices.db, 'referrals'), {
-                    userId: userId,
-                    productId: productId,
-                    referralId: referralId,
-                    referralLink: referralLink,
-                    createdAt: new Date().toISOString()
-                });
-            } catch (error) {
-                prompt('Copy your referral link:', referralLink);
-            }
+    function verifyAdminAccess() {
+        const code = document.getElementById('adminCode')?.value;
+        const validCodes = ['ADMIN2025', 'TAUADMIN', 'MAGERO2025'];
+        
+        if (validCodes.includes(code)) {
+            closeModal('adminAccessModal');
+            alert('Admin portal coming soon!');
+            // window.open('tau-admin-panel.html', '_blank');
+        } else {
+            alert('❌ Invalid access code');
         }
+    }
 
-        async function uploadProfilePhoto(event) {
-            const file = event.target.files[0];
-            if (!file || file.size > 5 * 1024 * 1024) return alert('Please select image under 5MB');
-            if (!window.currentUser) return alert('Please login first');
-
-            try {
-                const { ref, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js');
-                const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-
-                const storageRef = ref(window.firebaseServices.storage, `profile-photos/${window.currentUser.uid}/${Date.now()}_${file.name}`);
-                const snapshot = await uploadBytes(storageRef, file);
-                const photoURL = await getDownloadURL(snapshot.ref);
-
-                await updateDoc(doc(window.firebaseServices.db, 'users', window.currentUser.uid), { photoURL: photoURL });
-
-                document.getElementById('profilePhoto').innerHTML = `<img src="${photoURL}">`;
-                alert('✅ Profile photo updated!');
-            } catch (error) {
-                alert('❌ Error uploading photo: ' + error.message);
-            }
+    function toggleChat() {
+        const widget = document.getElementById('chatWidget');
+        if (widget) {
+            widget.classList.toggle('active');
         }
+    }
 
-        function viewProduct(productId) {
-            alert('🔍 Product Details - Coming Soon!\n\nFull information, reviews, and purchase options.');
-        }
+    function sendChatMessage() {
+        const input = document.getElementById('chatInput');
+        const message = input?.value?.trim();
+        if (!message) return;
 
-        async function transferToKabiru() {
-            if (!window.currentUser) return;
+        const messagesContainer = document.getElementById('chatMessages');
+        if (!messagesContainer) return;
 
-            try {
-                const { doc, getDoc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-                const userDoc = await getDoc(doc(window.firebaseServices.db, 'users', window.currentUser.uid));
-                const userData = userDoc.data();
+        const userMsg = document.createElement('div');
+        userMsg.className = 'chat-message user';
+        userMsg.innerHTML = `<p>${message}</p>`;
+        messagesContainer.appendChild(userMsg);
+        input.value = '';
 
-                if ((userData.points || 0) < 1000) {
-                    alert('⚠️ You need at least 1000 points to transfer.');
-                    return;
-                }
-
-                const confirmTransfer = confirm(`💎 Transfer ${userData.points} iKb points to Kabiru Mining?`);
-                
-                if (confirmTransfer) {
-                    await updateDoc(doc(window.firebaseServices.db, 'users', window.currentUser.uid), {
-                        points: 0,
-                        lastKabiruTransfer: new Date().toISOString()
-                    });
-
-                    alert('✅ Transfer Successful!\n\n' + userData.points + ' iKb points transferred to Kabiru Mining App!');
-                    loadUserData();
-                }
-            } catch (error) {
-                alert('❌ Transfer failed: ' + error.message);
-            }
-        }
-
-        function toggleChat() {
-            document.getElementById('chatWidget').classList.toggle('active');
-        }
-
-        function sendChatMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            if (!message) return;
-
-            const messagesContainer = document.getElementById('chatMessages');
-            const userMsg = document.createElement('div');
-            userMsg.className = 'chat-message user';
-            userMsg.innerHTML = `<p>${message}</p>`;
-            messagesContainer.appendChild(userMsg);
-            input.value = '';
-
-            setTimeout(() => {
-                const adminMsg = document.createElement('div');
-                adminMsg.className = 'chat-message admin';
-                adminMsg.innerHTML = '<p>Thank you! Our support team will respond shortly.</p>';
-                messagesContainer.appendChild(adminMsg);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }, 1000);
-
+        setTimeout(() => {
+            const adminMsg = document.createElement('div');
+            adminMsg.className = 'chat-message admin';
+            adminMsg.innerHTML = '<p>Thank you! Our support team will respond shortly.</p>';
+            messagesContainer.appendChild(adminMsg);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
+        }, 1000);
 
-        window.showPage = showPage;
-        window.showModal = showModal;
-        window.closeModal = closeModal;
-        window.togglePassword = togglePassword;
-        window.loginAccount = loginAccount;
-        window.createAccount = createAccount;
-        window.logoutAccount = logoutAccount;
-        window.sendPasswordReset = sendPasswordReset;
-        window.submitProduct = submitProduct;
-        window.registerMarketeer = registerMarketeer;
-        window.performSearch = performSearch;
-        window.filterCategory = filterCategory;
-        window.showAdminPortal = showAdminPortal;
-        window.verifyAdminAccess = verifyAdminAccess;
-        window.generateQuickReferral = generateQuickReferral;
-        window.uploadProfilePhoto = uploadProfilePhoto;
-        window.viewProduct = viewProduct;
-        window.transferToKabiru = transferToKabiru;
-        window.toggleChat = toggleChat;
-        window.sendChatMessage = sendChatMessage;
-    </script>
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // Make functions global
+    window.showPage = showPage;
+    window.showModal = showModal;
+    window.closeModal = closeModal;
+    window.togglePassword = togglePassword;
+    window.loginAccount = loginAccount;
+    window.createAccount = createAccount;
+    window.logoutAccount = logoutAccount;
+    window.sendPasswordReset = sendPasswordReset;
+    window.performSearch = performSearch;
+    window.filterCategory = filterCategory;
+    window.showAdminPortal = showAdminPortal;
+    window.verifyAdminAccess = verifyAdminAccess;
+    window.toggleChat = toggleChat;
+    window.sendChatMessage = sendChatMessage;
+
+    console.log('✅ Utility functions loaded');
+</script>
 
     <!-- Chat Widget -->
     <button class="chat-toggle" onclick="toggleChat()">💬</button>
