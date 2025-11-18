@@ -460,113 +460,138 @@
         }
 
         async function loginAccount() {
-            const email = document.getElementById('accountEmail')?.value;
-            const password = document.getElementById('accountPassword')?.value;
+    const email = document.getElementById('accountEmail')?.value;
+    const password = document.getElementById('accountPassword')?.value;
+    
+    if (!email || !password) {
+        return alert('⚠️ Please enter email and password');
+    }
+
+    if (!window.firebaseServices || !window.firebaseServices.auth) {
+        return alert('⚠️ Please wait a moment, app is still loading...');
+    }
+
+    try {
+        const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+        const userCredential = await signInWithEmailAndPassword(window.firebaseServices.auth, email, password);
+        
+        // Check if email is verified
+        if (!userCredential.user.emailVerified) {
+            // Send verification email again
+            const { sendEmailVerification } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+            await sendEmailVerification(userCredential.user);
             
-            if (!email || !password) {
-                return alert('⚠️ Please enter email and password');
-            }
-
-            if (!window.firebaseServices || !window.firebaseServices.auth) {
-                return alert('⚠️ Please wait a moment, app is still loading...');
-            }
-
-            try {
-                const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-                await signInWithEmailAndPassword(window.firebaseServices.auth, email, password);
-                alert('✅ Login successful!');
-                showPage('buyProduct');
-            } catch (error) {
-                console.error('Login error:', error);
-                let errorMessage = 'Login failed: ';
-                if (error.code === 'auth/user-not-found') {
-                    errorMessage += 'No account found with this email.';
-                } else if (error.code === 'auth/wrong-password') {
-                    errorMessage += 'Incorrect password.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage += 'Invalid email address.';
-                } else {
-                    errorMessage += error.message;
-                }
-                alert('❌ ' + errorMessage);
-            }
+            // Sign them out
+            const { signOut } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+            await signOut(window.firebaseServices.auth);
+            
+            alert('⚠️ Email Not Verified\n\n📧 Please verify your email before logging in.\n\nWe just sent you a new verification link.\n\nCheck your inbox (and spam folder) and click the verification link, then try logging in again.');
+            return;
         }
+        
+        alert('✅ Login successful!');
+        showPage('buyProduct');
+    } catch (error) {
+        console.error('Login error:', error);
+        let errorMessage = 'Login failed: ';
+        if (error.code === 'auth/user-not-found') {
+            errorMessage += 'No account found with this email.';
+        } else if (error.code === 'auth/wrong-password') {
+            errorMessage += 'Incorrect password.';
+        } else if (error.code === 'auth/invalid-email') {
+            errorMessage += 'Invalid email address.';
+        } else if (error.code === 'auth/invalid-credential') {
+            errorMessage += 'Invalid email or password.';
+        } else {
+            errorMessage += error.message;
+        }
+        alert('❌ ' + errorMessage);
+    }
+}
 
         async function createAccount(event) {
-            if (event) event.preventDefault();
-            
-            const fullName = document.getElementById('regFullName')?.value;
-            const email = document.getElementById('regEmail')?.value;
-            const password = document.getElementById('regPassword')?.value;
-            const confirmPassword = document.getElementById('regConfirmPassword')?.value;
-            
-            if (!fullName || !email || !password) {
-                return alert('⚠️ Please fill in all fields');
-            }
-            
-            if (password !== confirmPassword) {
-                return alert('❌ Passwords do not match!');
-            }
-            
-            if (password.length < 6) {
-                return alert('❌ Password must be at least 6 characters');
-            }
+    if (event) event.preventDefault();
+    
+    const fullName = document.getElementById('regFullName')?.value;
+    const email = document.getElementById('regEmail')?.value;
+    const password = document.getElementById('regPassword')?.value;
+    const confirmPassword = document.getElementById('regConfirmPassword')?.value;
+    
+    if (!fullName || !email || !password) {
+        return alert('⚠️ Please fill in all fields');
+    }
+    
+    if (password !== confirmPassword) {
+        return alert('❌ Passwords do not match!');
+    }
+    
+    if (password.length < 6) {
+        return alert('❌ Password must be at least 6 characters');
+    }
 
-            if (!window.firebaseServices) {
-                return alert('⚠️ Please wait, app is still loading...');
-            }
+    if (!window.firebaseServices) {
+        return alert('⚠️ Please wait, app is still loading...');
+    }
 
-            try {
-                const { createUserWithEmailAndPassword, sendEmailVerification } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-                const { doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-                
-                const userCredential = await createUserWithEmailAndPassword(
-                    window.firebaseServices.auth, 
-                    email, 
-                    password
-                );
-                
-                const user = userCredential.user;
-                await sendEmailVerification(user);
-                
-                const timestamp = Date.now().toString(36).toUpperCase();
-                const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
-                const userCode = `TAU-${timestamp}-${randomStr}`;
-                
-                await setDoc(doc(window.firebaseServices.db, 'users', user.uid), {
-                    uid: user.uid,
-                    email: email,
-                    fullName: fullName,
-                    userCode: userCode,
-                    points: 0,
-                    sales: 0,
-                    referrals: 0,
-                    products: 0,
-                    verified: false,
-                    emailVerified: false,
-                    role: 'user',
-                    createdAt: serverTimestamp(),
-                    lastLogin: serverTimestamp()
-                });
-                
-                alert(`✅ Account Created!\n\n📧 Verification email sent to:\n${email}\n\n🔑 Your Code:\n${userCode}\n\nPlease verify your email before logging in.`);
-                
-                closeModal('registerModal');
-                document.getElementById('registerForm')?.reset();
-                
-            } catch (error) {
-                console.error('Registration error:', error);
-                let errorMessage = 'Registration failed: ';
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage += 'This email is already registered.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage += 'Invalid email address.';
-                } else {
-                    errorMessage += error.message;
-                }
-                alert('❌ ' + errorMessage);
-            }
+    try {
+        const { createUserWithEmailAndPassword, sendEmailVerification } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+        const { doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const userCredential = await createUserWithEmailAndPassword(
+            window.firebaseServices.auth, 
+            email, 
+            password
+        );
+        
+        const user = userCredential.user;
+        
+        // Generate unique code
+        const timestamp = Date.now().toString(36).toUpperCase();
+        const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
+        const userCode = `TAU-${timestamp}-${randomStr}`;
+        
+        // Send verification email
+        await sendEmailVerification(user);
+        
+        // Create user document
+        await setDoc(doc(window.firebaseServices.db, 'users', user.uid), {
+            uid: user.uid,
+            email: email,
+            fullName: fullName,
+            userCode: userCode,
+            points: 0,
+            sales: 0,
+            referrals: 0,
+            products: 0,
+            verified: false,
+            emailVerified: false,
+            role: 'user',
+            createdAt: serverTimestamp(),
+            lastLogin: serverTimestamp()
+        });
+        
+        // Sign them out immediately
+        const { signOut } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+        await signOut(window.firebaseServices.auth);
+        
+        alert(`✅ Account Created Successfully!\n\n📧 IMPORTANT: Verification Email Sent\n\n🔑 Your Unique Code: ${userCode}\n(Save this code!)\n\n✉️ Check your email: ${email}\n\n⚠️ You MUST verify your email before you can login.\n\n1. Check your inbox (and spam folder)\n2. Click the verification link\n3. Come back and login\n\nThe verification link expires in 1 hour.`);
+        
+        closeModal('registerModal');
+        document.getElementById('registerForm')?.reset();
+        
+    } catch (error) {
+        console.error('Registration error:', error);
+        let errorMessage = 'Registration failed: ';
+        if (error.code === 'auth/email-already-in-use') {
+            errorMessage += 'This email is already registered. Please login instead.';
+        } else if (error.code === 'auth/invalid-email') {
+            errorMessage += 'Invalid email address.';
+        } else {
+            errorMessage += error.message;
         }
+        alert('❌ ' + errorMessage);
+    }
+            }
 
         async function logoutAccount() {
             if (!window.firebaseServices) return;
@@ -754,15 +779,17 @@
         }
 
         function verifyAdminAccess() {
-            const code = document.getElementById('adminCode')?.value;
-            const validCodes = ['ADMIN2025', 'TAUADMIN', 'MAGERO2025'];
-            
-            if (validCodes.includes(code)) {
-                closeModal('adminAccessModal');
-                alert('Admin portal coming soon!');
-            } else {
-                alert('❌ Invalid access code');
-            }
+    const code = document.getElementById('adminCode')?.value;
+    const validCodes = ['ADMIN2025', 'TAUADMIN', 'MAGERO2025'];
+    
+    if (validCodes.includes(code)) {
+        closeModal('adminAccessModal');
+        // Update this URL to your actual admin page
+        const adminUrl = 'https://magero1985.github.io/tau-admin-panel.html';
+        window.open(adminUrl, '_blank');
+    } else {
+        alert('❌ Invalid access code');
+    }
         }
 
         async function generateQuickReferral(productId) {
