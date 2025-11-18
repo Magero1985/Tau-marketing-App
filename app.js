@@ -355,13 +355,48 @@ window.viewProduct = async function(productId) {
     }
 };
 
-window.generateQuickReferral = function(productId) {
+// Replace in app.js
+window.generateQuickReferral = async function(productId) {
+    console.log('Generate referral called. User:', window.currentUser);
+    
     if (!window.currentUser) {
-        alert('⚠️ Please login first!');
-        window.showPage('myAccount');
+        alert('⚠️ Please login first to generate referral links!\n\nReferral links help you earn commissions when people buy through your link.');
+        if (window.showPage) {
+            window.showPage('myAccount');
+        }
         return;
     }
-    alert('Referral generation coming soon!');
+
+    const userId = window.currentUser.uid;
+    const referralId = `${userId.substring(0, 8)}_${productId}_${Date.now()}`;
+    const baseUrl = window.location.origin + window.location.pathname;
+    const referralLink = `${baseUrl}?ref=${referralId}&product=${productId}`;
+
+    const message = `🎉 Referral Link Generated!\n\n💰 EARNINGS PER SALE:\n🥇 Level 1: 50 iKb points\n🥈 Level 2: 35 iKb points\n🥉 Level 3: 15 iKb points\n🏅 Level 4: 10 iKb points\n⭐ Level 5: 5 iKb points\n\n⛏️ Points auto-sync to Kabiru Mining!\n\n📱 Your referral link has been copied to clipboard!\n\nStart sharing now! 🚀`;
+
+    try {
+        // Try to copy to clipboard
+        await navigator.clipboard.writeText(referralLink);
+        
+        // Save referral to database
+        await addDoc(collection(db, 'referrals'), {
+            userId: userId,
+            productId: productId,
+            referralId: referralId,
+            referralLink: referralLink,
+            clicks: 0,
+            conversions: 0,
+            earnings: 0,
+            createdAt: serverTimestamp()
+        });
+        
+        alert(message + '\n\n✅ Link copied to clipboard!');
+        
+    } catch (error) {
+        console.error('Referral generation error:', error);
+        // Fallback: show prompt
+        prompt('📋 Copy your referral link:', referralLink);
+    }
 };
 
 // ============================================
