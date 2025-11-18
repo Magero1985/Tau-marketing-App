@@ -8,18 +8,50 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <title>Tau Global Marketplace</title>
-    <style>
-        <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script>
-        <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script>
-        function {
-  emailjs.init('ynxh9_yo3dREGlzOe');
+    
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        (function() {
+            emailjs.init('ynxh9_yo3dREGlzOe');
             console.log('✅ EmailJS initialized');
-    })();
-</script>
+        })();
+    </script>
+    
+    <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; }
+        
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(102, 126, 234, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: white;
+        }
+        .loading-overlay.hidden {
+            display: none;
+        }
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
         .header { background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 1rem; position: sticky; top: 0; z-index: 100; }
         .header-content { max-width: 1400px; margin: 0 auto; }
         .logo-container { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
@@ -45,7 +77,7 @@
         .search-section p { color: #667eea; font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.5; }
         .search-box { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
         .search-input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; }
-        .btn-search { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 1rem; }
+        .btn-search { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 1rem; cursor: pointer; }
         .filter-container { display: flex; gap: 5px; flex-wrap: wrap; }
         .filter-btn { padding: 8px 15px; border: 2px solid #e0e0e0; background: white; border-radius: 15px; cursor: pointer; font-size: 0.8rem; }
         .filter-btn.active { background: #667eea; color: white; border-color: #667eea; }
@@ -107,42 +139,6 @@
         .user-code { font-family: monospace; font-size: 1.3rem; font-weight: 900; color: #667eea; letter-spacing: 2px; }
         .install-prompt { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem; border-radius: 10px; margin-bottom: 1rem; display: none; align-items: center; justify-content: space-between; }
         .install-prompt.show { display: flex; }
-        .payment-methods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem; }
-        .payment-card { background: #f7fafc; padding: 1rem; border-radius: 10px; border: 2px solid #e2e8f0; cursor: pointer; text-align: center; transition: all 0.3s; }
-        .payment-card:hover { border-color: #667eea; transform: translateY(-2px); }
-        .payment-card.selected { background: #667eea; color: white; border-color: #667eea; }
-        /* Loading overlay */
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(102, 126, 234, 0.95);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    color: white;
-}
-
-.loading-overlay.hidden {
-    display: none;
-}
-
-.spinner {
-    width: 60px;
-    height: 60px;
-    border: 5px solid rgba(255,255,255,0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
     </style>
 </head>
 <body>
@@ -152,6 +148,7 @@
         <h2 style="margin-top: 20px;">Loading Tau Marketplace...</h2>
         <p style="margin-top: 10px; opacity: 0.8;">Please wait a moment</p>
     </div>
+
     <div class="install-prompt" id="installPrompt">
         <span>📱 Install Tau Marketplace App</span>
         <button class="btn btn-secondary" onclick="installPWA()" style="background: white; color: #667eea;">Install</button>
@@ -311,52 +308,6 @@
             </div>
         </div>
 
-        <!-- Sell Product -->
-        <div id="sellProduct" class="page-section">
-            <h2 style="margin-bottom: 1.5rem;">📦 Sell Your Product</h2>
-            <div class="profile-section">
-                <form id="sellProductForm" onsubmit="submitProduct(event)">
-                    <div class="form-group">
-                        <label>Product Name *</label>
-                        <input type="text" name="productName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Category *</label>
-                        <select name="category" required>
-                            <option value="">Select...</option>
-                            <option value="physical">Physical Product</option>
-                            <option value="service">Service</option>
-                            <option value="app">App</option>
-                            <option value="website">Website</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Description *</label>
-                        <textarea name="description" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Price (USD) *</label>
-                        <input type="number" name="price" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Image *</label>
-                        <input type="file" name="productImage" accept="image/*" required>
-                        <div id="uploadProgress">
-                            <div style="background: #e2e8f0; border-radius: 8px; height: 25px; overflow: hidden;">
-                                <div id="uploadProgressBar"></div>
-                            </div>
-                            <p id="uploadProgressText" style="text-align: center; margin-top: 0.5rem; color: #667eea; font-size: 0.85rem;"></p>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Contact Email *</label>
-                        <input type="email" name="contactEmail" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Submit for Verification</button>
-                </form>
-            </div>
-        </div>
-
         <!-- Market Product -->
         <div id="marketProduct" class="page-section">
             <h2 style="margin-bottom: 1.5rem;">📢 Become a Marketeer</h2>
@@ -395,6 +346,7 @@
             </div>
         </div>
     </div>
+    
     <!-- Modals -->
     <div id="resetPasswordModal" class="modal">
         <div class="modal-content">
@@ -420,7 +372,6 @@
         </div>
     </div>
 
-    <!-- Registration Modal -->
     <div id="registerModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('registerModal')">&times;</span>
@@ -428,7 +379,7 @@
             <form id="registerForm" onsubmit="createAccount(event)">
                 <div class="form-group">
                     <label>Full Name *</label>
-                    <input type="text" id="regFullName" required>
+<input type="text" id="regFullName" required>
                 </div>
                 <div class="form-group">
                     <label>Email *</label>
@@ -451,312 +402,6 @@
         </div>
     </div>
 
-    
-    <script type="module" src="app.js"></script>
-
-    <script>
-    // Wait for Firebase to initialize
-    let firebaseReady = false;
-    
-    window.addEventListener('firebaseInitialized', () => {
-        firebaseReady = true;
-        console.log('✅ Firebase initialized and ready');
-    });
-
-    function showPage(pageId) {
-        document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-        const page = document.getElementById(pageId);
-        if (page) {
-            page.classList.add('active');
-        }
-    }
-
-    function showModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.add('active');
-        }
-    }
-
-    function closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.remove('active');
-        }
-    }
-
-    function togglePassword(inputId) {
-        const input = document.getElementById(inputId);
-        if (input) {
-            input.type = input.type === 'password' ? 'text' : 'password';
-        }
-    }
-
-    async function loginAccount() {
-        const email = document.getElementById('accountEmail')?.value;
-        const password = document.getElementById('accountPassword')?.value;
-        
-        if (!email || !password) {
-            return alert('⚠️ Please enter email and password');
-        }
-
-        // Check if Firebase is ready
-        if (!window.firebaseServices || !window.firebaseServices.auth) {
-            console.error('Firebase not initialized yet');
-            return alert('⚠️ Please wait a moment and try again. App is still loading...');
-        }
-
-        try {
-            const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-            await signInWithEmailAndPassword(window.firebaseServices.auth, email, password);
-            alert('✅ Login successful!');
-            showPage('buyProduct');
-        } catch (error) {
-            console.error('Login error:', error);
-            let errorMessage = 'Login failed: ';
-            if (error.code === 'auth/user-not-found') {
-                errorMessage += 'No account found with this email.';
-            } else if (error.code === 'auth/wrong-password') {
-                errorMessage += 'Incorrect password.';
-            } else if (error.code === 'auth/invalid-email') {
-                errorMessage += 'Invalid email address.';
-            } else if (error.code === 'auth/too-many-requests') {
-                errorMessage += 'Too many failed attempts. Try again later.';
-            } else {
-                errorMessage += error.message;
-            }
-            alert('❌ ' + errorMessage);
-        }
-    }
-
-    async function createAccount(event) {
-        if (event) event.preventDefault();
-        
-        const fullName = document.getElementById('regFullName')?.value;
-        const email = document.getElementById('regEmail')?.value;
-        const password = document.getElementById('regPassword')?.value;
-        const confirmPassword = document.getElementById('regConfirmPassword')?.value;
-        
-        if (!fullName || !email || !password) {
-            return alert('⚠️ Please fill in all fields');
-        }
-        
-        if (password !== confirmPassword) {
-            return alert('❌ Passwords do not match!');
-        }
-        
-        if (password.length < 6) {
-            return alert('❌ Password must be at least 6 characters');
-        }
-
-        if (!window.firebaseServices) {
-            return alert('⚠️ Please wait, app is still loading...');
-        }
-
-        try {
-            const { createUserWithEmailAndPassword, sendEmailVerification } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-            const { doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-            
-            const userCredential = await createUserWithEmailAndPassword(
-                window.firebaseServices.auth, 
-                email, 
-                password
-            );
-            
-            const user = userCredential.user;
-            
-            // Send verification email
-            await sendEmailVerification(user);
-            
-            // Generate unique code
-            const timestamp = Date.now().toString(36).toUpperCase();
-            const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
-            const userCode = `TAU-${timestamp}-${randomStr}`;
-            
-            // Create user document
-            await setDoc(doc(window.firebaseServices.db, 'users', user.uid), {
-                uid: user.uid,
-                email: email,
-                fullName: fullName,
-                userCode: userCode,
-                points: 0,
-                sales: 0,
-                referrals: 0,
-                products: 0,
-                verified: false,
-                emailVerified: false,
-                role: 'user',
-                createdAt: serverTimestamp(),
-                lastLogin: serverTimestamp()
-            });
-            
-            alert(`✅ Account Created!\n\n📧 Verification email sent to:\n${email}\n\n🔑 Your Code:\n${userCode}\n\nPlease verify your email before logging in.`);
-            
-            closeModal('registerModal');
-            document.getElementById('registerForm')?.reset();
-            
-        } catch (error) {
-            console.error('Registration error:', error);
-            let errorMessage = 'Registration failed: ';
-            if (error.code === 'auth/email-already-in-use') {
-                errorMessage += 'This email is already registered.';
-            } else if (error.code === 'auth/invalid-email') {
-                errorMessage += 'Invalid email address.';
-            } else if (error.code === 'auth/weak-password') {
-                errorMessage += 'Password is too weak.';
-            } else {
-                errorMessage += error.message;
-            }
-            alert('❌ ' + errorMessage);
-        }
-    }
-
-    async function logoutAccount() {
-        if (!window.firebaseServices) return;
-        
-        try {
-            const { signOut } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-            await signOut(window.firebaseServices.auth);
-            showPage('buyProduct');
-            alert('✅ Logged out successfully');
-        } catch (error) {
-            console.error('Logout error:', error);
-            alert('❌ Logout failed');
-        }
-    }
-
-    async function sendPasswordReset() {
-        const email = document.getElementById('resetEmail')?.value;
-        
-        if (!email) {
-            return alert('⚠️ Please enter your email address');
-        }
-
-        if (!window.firebaseServices) {
-            return alert('⚠️ Please wait, app is still loading...');
-        }
-
-        try {
-            const { sendPasswordResetEmail } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-            await sendPasswordResetEmail(window.firebaseServices.auth, email);
-            alert('✅ Password reset email sent! Check your inbox.');
-            closeModal('resetPasswordModal');
-            document.getElementById('resetEmail').value = '';
-        } catch (error) {
-            console.error('Password reset error:', error);
-            alert('❌ Error: ' + error.message);
-        }
-    }
-
-    function performSearch() {
-        const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase() || '';
-        const cards = document.querySelectorAll('.product-card');
-        let found = 0;
-
-        cards.forEach(card => {
-            const title = card.querySelector('.product-title')?.textContent?.toLowerCase() || '';
-            const desc = card.querySelector('.product-description')?.textContent?.toLowerCase() || '';
-
-            if (title.includes(searchTerm) || desc.includes(searchTerm) || searchTerm === '') {
-                card.style.display = 'block';
-                found++;
-            } else {
-                card.style.display = 'none';
-            }
-        });
-
-        if (found === 0 && searchTerm !== '') {
-            const grid = document.getElementById('marketplaceGrid');
-            if (grid) {
-                grid.innerHTML = '<div class="loading">No results found for "' + searchTerm + '"</div>';
-            }
-        }
-    }
-
-    function filterCategory(category) {
-        const cards = document.querySelectorAll('.product-card');
-        const buttons = document.querySelectorAll('.filter-btn');
-
-        buttons.forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-
-        cards.forEach(card => {
-            if (category === 'all' || card.dataset.category === category) {
-                card.style.display = 'block';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-    }
-
-    function showAdminPortal() {
-        showModal('adminAccessModal');
-    }
-
-    function verifyAdminAccess() {
-        const code = document.getElementById('adminCode')?.value;
-        const validCodes = ['ADMIN2025', 'TAUADMIN', 'MAGERO2025'];
-        
-        if (validCodes.includes(code)) {
-            closeModal('adminAccessModal');
-            alert('Admin portal coming soon!');
-            // window.open('tau-admin-panel.html', '_blank');
-        } else {
-            alert('❌ Invalid access code');
-        }
-    }
-
-    function toggleChat() {
-        const widget = document.getElementById('chatWidget');
-        if (widget) {
-            widget.classList.toggle('active');
-        }
-    }
-
-    function sendChatMessage() {
-        const input = document.getElementById('chatInput');
-        const message = input?.value?.trim();
-        if (!message) return;
-
-        const messagesContainer = document.getElementById('chatMessages');
-        if (!messagesContainer) return;
-
-        const userMsg = document.createElement('div');
-        userMsg.className = 'chat-message user';
-        userMsg.innerHTML = `<p>${message}</p>`;
-        messagesContainer.appendChild(userMsg);
-        input.value = '';
-
-        setTimeout(() => {
-            const adminMsg = document.createElement('div');
-            adminMsg.className = 'chat-message admin';
-            adminMsg.innerHTML = '<p>Thank you! Our support team will respond shortly.</p>';
-            messagesContainer.appendChild(adminMsg);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }, 1000);
-
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    // Make functions global
-    window.showPage = showPage;
-    window.showModal = showModal;
-    window.closeModal = closeModal;
-    window.togglePassword = togglePassword;
-    window.loginAccount = loginAccount;
-    window.createAccount = createAccount;
-    window.logoutAccount = logoutAccount;
-    window.sendPasswordReset = sendPasswordReset;
-    window.performSearch = performSearch;
-    window.filterCategory = filterCategory;
-    window.showAdminPortal = showAdminPortal;
-    window.verifyAdminAccess = verifyAdminAccess;
-    window.toggleChat = toggleChat;
-    window.sendChatMessage = sendChatMessage;
-
-    console.log('✅ Utility functions loaded');
-</script>
-
     <!-- Chat Widget -->
     <button class="chat-toggle" onclick="toggleChat()">💬</button>
     <div class="chat-widget" id="chatWidget">
@@ -772,7 +417,467 @@
             <button class="btn btn-primary" onclick="sendChatMessage()">Send</button>
         </div>
     </div>
-
+<!-- Load app.js module first -->
     <script type="module" src="app.js"></script>
+
+    <!-- Utility functions -->
+    <script>
+        // Wait for Firebase to initialize
+        let firebaseReady = false;
+        
+        window.addEventListener('firebaseInitialized', () => {
+            firebaseReady = true;
+            console.log('✅ Firebase initialized and ready');
+        });
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            const page = document.getElementById(pageId);
+            if (page) {
+                page.classList.add('active');
+            }
+        }
+
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.type = input.type === 'password' ? 'text' : 'password';
+            }
+        }
+
+        async function loginAccount() {
+            const email = document.getElementById('accountEmail')?.value;
+            const password = document.getElementById('accountPassword')?.value;
+            
+            if (!email || !password) {
+                return alert('⚠️ Please enter email and password');
+            }
+
+            if (!window.firebaseServices || !window.firebaseServices.auth) {
+                return alert('⚠️ Please wait a moment, app is still loading...');
+            }
+
+            try {
+                const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                await signInWithEmailAndPassword(window.firebaseServices.auth, email, password);
+                alert('✅ Login successful!');
+                showPage('buyProduct');
+            } catch (error) {
+                console.error('Login error:', error);
+                let errorMessage = 'Login failed: ';
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage += 'No account found with this email.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage += 'Incorrect password.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage += 'Invalid email address.';
+                } else {
+                    errorMessage += error.message;
+                }
+                alert('❌ ' + errorMessage);
+            }
+        }
+
+        async function createAccount(event) {
+            if (event) event.preventDefault();
+            
+            const fullName = document.getElementById('regFullName')?.value;
+            const email = document.getElementById('regEmail')?.value;
+            const password = document.getElementById('regPassword')?.value;
+            const confirmPassword = document.getElementById('regConfirmPassword')?.value;
+            
+            if (!fullName || !email || !password) {
+                return alert('⚠️ Please fill in all fields');
+            }
+            
+            if (password !== confirmPassword) {
+                return alert('❌ Passwords do not match!');
+            }
+            
+            if (password.length < 6) {
+                return alert('❌ Password must be at least 6 characters');
+            }
+
+            if (!window.firebaseServices) {
+                return alert('⚠️ Please wait, app is still loading...');
+            }
+
+            try {
+                const { createUserWithEmailAndPassword, sendEmailVerification } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                const { doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                const userCredential = await createUserWithEmailAndPassword(
+                    window.firebaseServices.auth, 
+                    email, 
+                    password
+                );
+                
+                const user = userCredential.user;
+                await sendEmailVerification(user);
+                
+                const timestamp = Date.now().toString(36).toUpperCase();
+                const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
+                const userCode = `TAU-${timestamp}-${randomStr}`;
+                
+                await setDoc(doc(window.firebaseServices.db, 'users', user.uid), {
+                    uid: user.uid,
+                    email: email,
+                    fullName: fullName,
+                    userCode: userCode,
+                    points: 0,
+                    sales: 0,
+                    referrals: 0,
+                    products: 0,
+                    verified: false,
+                    emailVerified: false,
+                    role: 'user',
+                    createdAt: serverTimestamp(),
+                    lastLogin: serverTimestamp()
+                });
+                
+                alert(`✅ Account Created!\n\n📧 Verification email sent to:\n${email}\n\n🔑 Your Code:\n${userCode}\n\nPlease verify your email before logging in.`);
+                
+                closeModal('registerModal');
+                document.getElementById('registerForm')?.reset();
+                
+            } catch (error) {
+                console.error('Registration error:', error);
+                let errorMessage = 'Registration failed: ';
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage += 'This email is already registered.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage += 'Invalid email address.';
+                } else {
+                    errorMessage += error.message;
+                }
+                alert('❌ ' + errorMessage);
+            }
+        }
+
+        async function logoutAccount() {
+            if (!window.firebaseServices) return;
+            
+            try {
+                const { signOut } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                await signOut(window.firebaseServices.auth);
+                showPage('buyProduct');
+                alert('✅ Logged out successfully');
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('❌ Logout failed');
+            }
+        }
+
+        async function sendPasswordReset() {
+            const email = document.getElementById('resetEmail')?.value;
+            
+            if (!email) {
+                return alert('⚠️ Please enter your email address');
+            }
+
+            if (!window.firebaseServices) {
+                return alert('⚠️ Please wait, app is still loading...');
+            }
+
+            try {
+                const { sendPasswordResetEmail } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                await sendPasswordResetEmail(window.firebaseServices.auth, email);
+                alert('✅ Password reset email sent! Check your inbox.');
+                closeModal('resetPasswordModal');
+                document.getElementById('resetEmail').value = '';
+            } catch (error) {
+                console.error('Password reset error:', error);
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        async function submitProduct(e) {
+            e.preventDefault();
+            if (!window.currentUser) {
+                alert('⚠️ Please login first');
+                showPage('myAccount');
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const file = formData.get('productImage');
+            if (!file || file.size > 5 * 1024 * 1024) return alert('Please select image under 5MB');
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.textContent = 'Uploading...';
+            submitBtn.disabled = true;
+
+            document.getElementById('uploadProgress').style.display = 'block';
+            const progressBar = document.getElementById('uploadProgressBar');
+            const progressText = document.getElementById('uploadProgressText');
+
+            try {
+                const { ref, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js');
+                const { collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                progressBar.style.width = '20%';
+                progressBar.textContent = '20%';
+                progressText.textContent = 'Uploading image...';
+
+                const storageRef = ref(window.firebaseServices.storage, `products/${window.currentUser.uid}/${Date.now()}_${file.name}`);
+                const snapshot = await uploadBytes(storageRef, file);
+                const imageURL = await getDownloadURL(snapshot.ref);
+
+                progressBar.style.width = '60%';
+                progressBar.textContent = '60%';
+                progressText.textContent = 'Saving details...';
+
+                await addDoc(collection(window.firebaseServices.db, 'products'), {
+                    userId: window.currentUser.uid,
+                    userEmail: window.currentUser.email,
+                    name: formData.get('productName'),
+                    category: formData.get('category'),
+                    description: formData.get('description'),
+                    price: parseFloat(formData.get('price')),
+                    imageURL: imageURL,
+                    contactEmail: formData.get('contactEmail'),
+                    verificationStatus: 'pending_initial',
+                    verificationStep: 1,
+                    views: 0,
+                    sales: 0,
+                    rating: 5.0,
+                    createdAt: serverTimestamp()
+                });
+
+                progressBar.style.width = '100%';
+                progressBar.textContent = '100%';
+                progressText.textContent = 'Complete!';
+
+                setTimeout(() => {
+                    alert('✅ Product Submitted!\n\n🎉 Admin will review within 24-48 hours.\n📧 You will receive notifications.\n🚀 Once approved, your product will be live!');
+                    e.target.reset();
+                    document.getElementById('uploadProgress').style.display = 'none';
+                    progressBar.style.width = '0%';
+                    showPage('myAccount');
+                }, 1000);
+
+            } catch (error) {
+                alert('❌ Submission failed: ' + error.message);
+            } finally {
+                submitBtn.textContent = 'Submit for Verification';
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function registerMarketeer(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            try {
+                const { createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                const userCredential = await createUserWithEmailAndPassword(
+                    window.firebaseServices.auth,
+                    formData.get('email'),
+                    formData.get('password')
+                );
+                
+                await setDoc(doc(window.firebaseServices.db, 'users', userCredential.user.uid), {
+                    email: formData.get('email'),
+                    fullName: formData.get('fullName'),
+                    role: 'marketeer',
+                    points: 0,
+                    sales: 0,
+                    referrals: 0,
+                    createdAt: new Date().toISOString()
+                });
+
+                alert('✅ Marketeer registration successful!');
+            } catch (error) {
+                alert('❌ Registration failed: ' + error.message);
+            }
+        }
+
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+            const cards = document.querySelectorAll('.product-card');
+            let found = 0;
+
+            cards.forEach(card => {
+                const title = card.querySelector('.product-title')?.textContent?.toLowerCase() || '';
+                const desc = card.querySelector('.product-description')?.textContent?.toLowerCase() || '';
+
+                if (title.includes(searchTerm) || desc.includes(searchTerm) || searchTerm === '') {
+                    card.style.display = 'block';
+                    found++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (found === 0 && searchTerm !== '') {
+                const grid = document.getElementById('marketplaceGrid');
+                if (grid) {
+                    grid.innerHTML = '<div class="loading">No results found</div>';
+                }
+            }
+        }
+
+        function filterCategory(category) {
+            const cards = document.querySelectorAll('.product-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function showAdminPortal() {
+            showModal('adminAccessModal');
+        }
+
+        function verifyAdminAccess() {
+            const code = document.getElementById('adminCode')?.value;
+            const validCodes = ['ADMIN2025', 'TAUADMIN', 'MAGERO2025'];
+            
+            if (validCodes.includes(code)) {
+                closeModal('adminAccessModal');
+                alert('Admin portal coming soon!');
+            } else {
+                alert('❌ Invalid access code');
+            }
+        }
+
+        async function generateQuickReferral(productId) {
+            if (!window.currentUser) {
+                alert('⚠️ Please login first!');
+                showPage('myAccount');
+                return;
+            }
+            alert('Referral link generation coming soon!');
+        }
+
+        async function uploadProfilePhoto(event) {
+            const file = event.target.files[0];
+            if (!file || file.size > 5 * 1024 * 1024) return alert('Please select image under 5MB');
+            if (!window.currentUser) return alert('Please login first');
+
+            try {
+                const { ref, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js');
+                const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+
+                const storageRef = ref(window.firebaseServices.storage, `profile-photos/${window.currentUser.uid}/${Date.now()}_${file.name}`);
+                const snapshot = await uploadBytes(storageRef, file);
+                const photoURL = await getDownloadURL(snapshot.ref);
+
+                await updateDoc(doc(window.firebaseServices.db, 'users', window.currentUser.uid), { photoURL: photoURL });
+
+                document.getElementById('profilePhoto').innerHTML = `<img src="${photoURL}">`;
+                alert('✅ Profile photo updated!');
+            } catch (error) {
+                alert('❌ Error uploading photo: ' + error.message);
+            }
+        }
+
+        function viewProduct(productId) {
+            alert('🔍 Product Details - Coming Soon!');
+        }
+
+        async function transferToKabiru() {
+            alert('Transfer to Kabiru coming soon!');
+        }
+
+        function toggleChat() {
+            const widget = document.getElementById('chatWidget');
+            if (widget) {
+                widget.classList.toggle('active');
+            }
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input?.value?.trim();
+            if (!message) return;
+
+            const messagesContainer = document.getElementById('chatMessages');
+            if (!messagesContainer) return;
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message user';
+            userMsg.innerHTML = `<p>${message}</p>`;
+            messagesContainer.appendChild(userMsg);
+            input.value = '';
+
+            setTimeout(() => {
+                const adminMsg = document.createElement('div');
+                adminMsg.className = 'chat-message admin';
+                adminMsg.innerHTML = '<p>Thank you! Our support team will respond shortly.</p>';
+                messagesContainer.appendChild(adminMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 1000);
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Make functions global
+        window.showPage = showPage;
+        window.showModal = showModal;
+        window.closeModal = closeModal;
+        window.togglePassword = togglePassword;
+        window.loginAccount = loginAccount;
+        window.createAccount = createAccount;
+        window.logoutAccount = logoutAccount;
+        window.sendPasswordReset = sendPasswordReset;
+        window.submitProduct = submitProduct;
+        window.registerMarketeer = registerMarketeer;
+        window.performSearch = performSearch;
+        window.filterCategory = filterCategory;
+        window.showAdminPortal = showAdminPortal;
+        window.verifyAdminAccess = verifyAdminAccess;
+        window.generateQuickReferral = generateQuickReferral;
+        window.uploadProfilePhoto = uploadProfilePhoto;
+        window.viewProduct = viewProduct;
+        window.transferToKabiru = transferToKabiru;
+        window.toggleChat = toggleChat;
+        window.sendChatMessage = sendChatMessage;
+
+        console.log('✅ Utility functions loaded');
+
+        // Hide loading overlay after page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if (loadingOverlay) {
+                    loadingOverlay.classList.add('hidden');
+                }
+                console.log('✅ App fully loaded');
+            }, 2000);
+        });
+
+        // Fallback: Force hide loading after 5 seconds
+        setTimeout(() => {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.classList.add('hidden');
+            }
+        }, 5000);
+    </script>
 </body>
 </html>
