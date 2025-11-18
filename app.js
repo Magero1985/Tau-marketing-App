@@ -329,8 +329,30 @@ function createSampleProducts() {
 }
 
 window.loadMarketplace = loadMarketplace;
-window.viewProduct = function(productId) {
-    alert('Product details coming soon!\nProduct ID: ' + productId);
+window.viewProduct = async function(productId) {
+    if (!window.currentUser) {
+        alert('⚠️ Please login or create an account to view product details!');
+        window.showPage('myAccount');
+        return;
+    }
+    
+    try {
+        // Increment view count
+        await updateDoc(doc(db, 'products', productId), {
+            views: increment(1)
+        });
+        
+        const productDoc = await getDoc(doc(db, 'products', productId));
+        if (productDoc.exists()) {
+            const product = productDoc.data();
+            alert(`🔍 ${product.name}\n\n💰 Price: $${product.price}\n📝 ${product.description}\n\n📧 Contact: ${product.contactEmail}\n\n✨ Full product page coming soon!`);
+        } else {
+            alert('🔍 Product Details\n\nThis is a sample product.\n\nCreate an account and start selling your own products!');
+        }
+    } catch (error) {
+        console.error('Error viewing product:', error);
+        alert('🔍 Product Details\n\nCreate an account to view full product details and contact sellers!');
+    }
 };
 
 window.generateQuickReferral = function(productId) {
