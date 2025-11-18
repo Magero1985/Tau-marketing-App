@@ -998,7 +998,24 @@ async function generateCodesForOldUsers() {
         console.error('Error:', error);
         alert('❌ Error: ' + error.message);
     }
-} 
+}  
+        function showCustomAlert(title, message) {
+    document.getElementById('customAlertTitle').textContent = title;
+    document.getElementById('customAlertMessage').textContent = message;
+    document.getElementById('customAlertOverlay').classList.add('show');
+}
+
+function closeCustomAlert() {
+    document.getElementById('customAlertOverlay').classList.remove('show');
+}
+
+window.showCustomAlert = showCustomAlert;
+window.closeCustomAlert = closeCustomAlert;
+
+// Override default alert (optional)
+// window.alert = function(message) {
+//     showCustomAlert('Notification', message);
+// };
 </script>     
 
     <!-- Custom Alert Modal -->
@@ -1009,6 +1026,5 @@ async function generateCodesForOldUsers() {
         <button class="custom-alert-btn" onclick="closeCustomAlert()">OK</button>
     </div>
 </div>
-</body>
-    
+</body> 
 </html>
