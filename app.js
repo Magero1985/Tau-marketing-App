@@ -1053,3 +1053,23 @@ async function sendPasswordReset() {
         window.toggleChat = toggleChat;
         window.sendChatMessage = sendChatMessage;
     </script>
+// Hide loading overlay after everything is ready
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) {
+            loadingOverlay.classList.add('hidden');
+        }
+        console.log('✅ App fully loaded and ready');
+    }, 2000); // Give 2 seconds for Firebase to fully initialize
+});
+
+// Fallback: Force hide loading after 5 seconds
+setTimeout(() => {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.add('hidden');
+    }
+}, 5000);
+
+console.log('📱 Tau Marketplace app.js fully loaded');
