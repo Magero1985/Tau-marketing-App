@@ -93,9 +93,15 @@ function generateUserCode() {
 }
 
 // Auth State Observer
+let authInitialized = false;
+
 onAuthStateChanged(auth, async (user) => {
+    console.log('🔐 Auth state changed:', user ? 'Logged in' : 'Logged out');
+    authInitialized = true;
+    
     if (user) {
         window.currentUser = user;
+        console.log('✅ User authenticated:', user.email);
         await loadUserData();
         
         // Check for email verification
@@ -107,6 +113,17 @@ onAuthStateChanged(auth, async (user) => {
         showLoginView();
     }
 });
+
+// Initialize marketplace after a short delay to ensure Firebase is ready
+setTimeout(() => {
+    if (document.getElementById('marketplaceGrid')) {
+        loadMarketplace();
+        console.log('📦 Marketplace loading initiated');
+    }
+}, 1000);
+
+// Export auth initialization check
+window.isAuthReady = () => authInitialized;
 
 // Enhanced User Registration with Unique Code
 window.createAccount = async (event) => {
@@ -678,20 +695,74 @@ window.loadUserData = loadUserData;
             }
         }
 
-        async function sendPasswordReset() {
-            const email = document.getElementById('resetEmail').value;
-            if (!email) return alert('Please enter your email address');
+async function sendPasswordReset() {
+    const email = document.getElementById('resetEmail')?.value;
+    
+    if (!email) {
+        return alert('⚠️ Please enter your email address');
+    }
 
-            try {
-                const { sendPasswordResetEmail } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-                await sendPasswordResetEmail(window.firebaseServices.auth, email);
-                alert('✅ Password reset email sent!');
-                closeModal('resetPasswordModal');
-            } catch (error) {
-                alert('❌ Error: ' + error.message);
-            }
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return alert('⚠️ Please enter a valid email address');
+    }
+
+    // Check if Firebase is ready - with timeout
+    let attempts = 0;
+    const maxAttempts = 10;
+    
+    while (!window.firebaseServices && attempts < maxAttempts) {
+        console.log('Waiting for Firebase... Attempt:', attempts + 1);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        attempts++;
+    }
+
+    if (!window.firebaseServices || !window.firebaseServices.auth) {
+        return alert('❌ App initialization failed. Please refresh the page and try again.');
+    }
+
+    // Show loading message
+    const resetBtn = event?.target;
+    const originalText = resetBtn?.textContent || 'Send Reset Link';
+    if (resetBtn) {
+        resetBtn.textContent = 'Sending...';
+        resetBtn.disabled = true;
+    }
+
+    try {
+        const { sendPasswordResetEmail } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+        
+        await sendPasswordResetEmail(window.firebaseServices.auth, email);
+        
+        alert('✅ Password reset email sent!\n\nPlease check your inbox (and spam folder) for the reset link from Firebase Authentication.\n\nThe link will expire in 1 hour.');
+        
+        closeModal('resetPasswordModal');
+        document.getElementById('resetEmail').value = '';
+        
+    } catch (error) {
+        console.error('Password reset error:', error);
+        
+        let errorMessage = 'Failed to send reset email: ';
+        
+        if (error.code === 'auth/user-not-found') {
+            errorMessage += 'No account exists with this email address.';
+        } else if (error.code === 'auth/invalid-email') {
+            errorMessage += 'Invalid email address format.';
+        } else if (error.code === 'auth/too-many-requests') {
+            errorMessage += 'Too many requests. Please try again later.';
+        } else {
+            errorMessage += error.message;
         }
-
+        
+        alert('❌ ' + errorMessage);
+    } finally {
+        if (resetBtn) {
+            resetBtn.textContent = originalText;
+            resetBtn.disabled = false;
+        }
+    }
+            }
         async function submitProduct(e) {
             e.preventDefault();
             if (!window.currentUser) {
