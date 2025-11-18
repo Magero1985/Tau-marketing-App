@@ -31,7 +31,6 @@ window.currentUser = null;
 window.dispatchEvent(new Event('firebaseInitialized'));
 console.log('✅ Firebase initialized successfully');
 
-// ... rest of your app.js code continues here
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc, orderBy, serverTimestamp, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
@@ -486,7 +485,7 @@ async function sendWelcomeEmail(email, name, userCode) {
     console.log('Welcome email would be sent to:', email);
     
     // Example EmailJS implementation:
-    // emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
+    // emailjs.send('ynxh9_yo3dREGlzOe', 'YOUR_TEMPLATE_ID', {
     //     to_email: email,
     //     to_name: name,
     //     user_code: userCode,
