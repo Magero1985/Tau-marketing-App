@@ -478,10 +478,103 @@ window.generateQuickReferral = async function(productId) {
     alert('Referral link generation coming soon!');
 };
 
-// EmailJS Integration Helpers (You need to configure EmailJS)
+// EmailJS Integration
 async function sendWelcomeEmail(email, name, userCode) {
-    // Configure EmailJS: https://www.emailjs.com/
-    // This is a placeholder - you'll need to add your EmailJS service
+    // Send Welcome Email
+async function sendWelcomeEmail(email, name, userCode) {
+    try {
+        const templateParams = {
+            to_email: email,
+            to_name: name,
+            user_email: email,
+            user_code: userCode,
+            message: 'Welcome to Tau Marketplace!'
+        };
+
+        await emailjs.send(
+            'service_2hg2dxh',      // Replace with your Service ID
+            'template_marketplace',     // Replace with your Welcome Template ID
+            templateParams
+        );
+        
+        console.log('✅ Welcome email sent to:', email);
+    } catch (error) {
+        console.error('❌ Error sending welcome email:', error);
+        // Don't block registration if email fails
+    }
+}
+
+// Notify Admin of New Product
+async function notifyAdminNewProduct(productData, productId) {
+    try {
+        const templateParams = {
+            product_name: productData.name,
+            product_category: productData.category,
+            product_price: productData.price,
+            product_description: productData.description,
+            seller_email: productData.userEmail,
+            seller_id: productData.userId,
+            product_id: productId,
+            admin_email: 'admin@taumarketplace.com' // Your admin email
+        };
+
+        await emailjs.send(
+            'service_2hg2dxh',      // Replace with your Service ID
+            'template_admin',   // Replace with your Admin Template ID
+            templateParams
+        );
+        
+        console.log('✅ Admin notification sent for product:', productId);
+    } catch (error) {
+        console.error('❌ Error sending admin notification:', error);
+    }
+}
+
+// Send Product Approval Email
+async function sendProductApprovalEmail(productData, sellerEmail, sellerName) {
+    try {
+        const templateParams = {
+            to_email: sellerEmail,
+            seller_name: sellerName,
+            product_name: productData.name,
+            product_url: window.location.origin + '/?product=' + productData.id
+        };
+
+        await emailjs.send(
+            'service_2hg2dxh',      // Replace with your Service ID
+            'template_marketplace',   // Replace with your Approval Template ID
+            templateParams
+        );
+        
+        console.log('✅ Approval email sent to:', sellerEmail);
+    } catch (error) {
+        console.error('❌ Error sending approval email:', error);
+    }
+}
+
+// Send Order Confirmation Email
+async function sendOrderConfirmation(orderData, buyerEmail, buyerName) {
+    try {
+        const templateParams = {
+            to_email: buyerEmail,
+            buyer_name: buyerName,
+            order_id: orderData.orderId,
+            product_name: orderData.productName,
+            total_amount: orderData.totalAmount,
+            order_date: new Date().toLocaleDateString()
+        };
+
+        await emailjs.send(
+            'service_2hg2dxh',
+            'template_order_confirm',
+            templateParams
+        );
+        
+        console.log('✅ Order confirmation sent');
+    } catch (error) {
+        console.error('❌ Error sending order confirmation:', error);
+    }
+}
     console.log('Welcome email would be sent to:', email);
     
     // Example EmailJS implementation:
