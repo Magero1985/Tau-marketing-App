@@ -1073,3 +1073,4 @@ setTimeout(() => {
 }, 5000);
 
 console.log('📱 Tau Marketplace app.js fully loaded');
+</script>
