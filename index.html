@@ -211,7 +211,7 @@
                 <button class="btn btn-primary" onclick="showPage('sellProduct')">📦 Sell</button>
                 <button class="btn btn-success" onclick="showPage('buyProduct')">🛒 Buy</button>
                 <button class="btn btn-warning" onclick="showPage('marketProduct')">📢 Market</button>
-                <button class="btn btn-info" onclick="showAdminPortal('https://github.com/Magero1985/Tau-marketing-App/tau-admin-panel.html')">🔐 Admin-Panel</button>
+                <button class="btn btn-info" onclick="showAdminPortal()">🔐 Admin-Panel</button>
                 <button class="btn btn-danger" onclick="showPage('newProducts')">🆕 New</button>
             </div>
         </div>
@@ -828,7 +828,7 @@
     if (validCodes.includes(code)) {
         closeModal('adminAccessModal');
         // Update this URL to your actual admin page
-        const adminUrl = 'https://magero1985.github.io/tau-admin-panel.html';
+        const adminUrl = 'https://magero1985.github.io/Tau-marketing-App/tau-admin-panel.html';
         window.open(adminUrl, '_blank');
     } else {
         alert('❌ Invalid access code');
